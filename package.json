@@ -1,6 +1,6 @@
 {
   "name": "puddy_m",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A promise based utility library",
   "main": "index.js",
   "scripts": {
