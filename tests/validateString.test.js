@@ -1,4 +1,4 @@
-import validateString from "../utils/validations/validateString";
+import validateString from "../src/utils/validations/validateString";
 
 test("validateString will reject when param is 1", () => {
   return expect(validateString(1)).rejects.toThrow(

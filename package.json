@@ -1,11 +1,11 @@
 {
   "name": "puddy_m",
-  "version": "1.0.2",
+  "version": "1.0.52",
   "description": "A promise based utility library",
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "start": "babel-node index.js",
+    "start": "npm run build && babel-node index.js",
     "build": "npx babel src --out-dir lib"
   },
   "repository": {

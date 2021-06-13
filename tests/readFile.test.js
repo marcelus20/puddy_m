@@ -1,4 +1,4 @@
-import readFile from "../utils/readFile";
+import readFile from "../src/utils/readFile";
 
 test("readFile will reject when param is null", () => {
   return expect(readFile(null)).rejects.toThrow(

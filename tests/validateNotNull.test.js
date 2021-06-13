@@ -1,4 +1,4 @@
-import validateNotNull from "../utils/validations/validateNotNull";
+import validateNotNull from "../src/utils/validations/validateNotNull";
 
 test("validateNotNull will reject when param is null", () => {
   return expect(validateNotNull(null)).rejects.toThrow(
@@ -11,6 +11,5 @@ test("validateNotNull will resolve when param is not null", () => {
 });
 
 test("validateNotNull will resolve when param is not null", () => {
-    return expect(validateNotNull("")).resolves.toBe("");
-  });
-  
+  return expect(validateNotNull("")).resolves.toBe("");
+});
