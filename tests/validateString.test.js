@@ -1,4 +1,5 @@
-import validateString from "../src/utils/validations/validateString";
+import validateString from "../src/validations/validateString";
+import 'regenerator-runtime/runtime';
 
 test("validateString will reject when param is 1", () => {
   return expect(validateString(1)).rejects.toThrow(

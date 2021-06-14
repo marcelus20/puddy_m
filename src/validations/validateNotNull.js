@@ -6,7 +6,7 @@
  */
 export default function validateNotNull(supposedNotNullArg) {
   return new Promise((resolve, reject) => {
-    if (supposedNotNullArg == null) {
+    if (supposedNotNullArg == null && typeof supposedNotNullArg != "undefined") {
       reject(TypeError("The passed argument can't be null."));
     } else {
       resolve(supposedNotNullArg);

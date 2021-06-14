@@ -1,5 +1,5 @@
 import fs from "fs";
-import validateString from "./validations/validateString";
+import validateString from "../validations/validateString";
 
 /**
  * Reads a file and resolves the content of the file.
