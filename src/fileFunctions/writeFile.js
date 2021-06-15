@@ -1,5 +1,4 @@
 import fs from "fs";
-import openFileToWrite from "./openFileToWrite";
 import closeFile from "./closeFile";
 import validateNotNull from "../validations/validateNotNull";
 import validateNotUndefined from "../validations/validateNotUndefined";
@@ -12,14 +11,13 @@ import validateNotUndefined from "../validations/validateNotUndefined";
  * @returns {Promise}
  */
 export default async function writeFile(
-  fileLocationAndName,
+  fileDescriptor,
   content = "--foo-bar--"
 ) {
   return new Promise((resolve, reject) => {
     validateNotNull(content)
       .then((content) => validateNotUndefined(content))
-      .then((content) => openFileToWrite(fileLocationAndName))
-      .then((fileDescriptor) => {
+      .then((content) => {
         fs.writeFile(fileDescriptor, content, (err) => {
           if (!err) {
             // closes the file if no error

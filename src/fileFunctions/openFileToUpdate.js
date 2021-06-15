@@ -6,9 +6,9 @@ import openFile from "./openFile";
  * @param {String} fileLocationAndName
  * @returns { Promise }
  */
-export default async function openFileToWrite(fileLocationAndName) {
+export default async function openFileToUpdate(fileLocationAndName) {
   return new Promise((resolve, reject) => {
-    openFile(fileLocationAndName, "wx")
+    openFile(fileLocationAndName, "r+")
       .then((fileDescriptor) => resolve(fileDescriptor))
       .catch((e) => reject(e));
   });

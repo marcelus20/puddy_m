@@ -1,4 +1,5 @@
 import checkIfFileExists from "./checkIfFileExists";
+import openFileToWrite from "./openFileToWrite";
 import writeFile from "./writeFile";
 
 /**
@@ -16,10 +17,11 @@ export default async function createFile(fileLocationAndName, content) {
             new Error("Could not create the new file. It may already exist.")
           );
         } else {
-          // write to the file.
-          return writeFile(fileLocationAndName, content);
+          // Open the file with wx flag
+          return openFileToWrite(fileLocationAndName);
         }
       })
+      .then((fileDescriptor) => writeFile(fileDescriptor, content))
       .then((wrote) => resolve(wrote)) // if the previous chained promise resolves, then it's always going to be true
       .catch((e) => reject(e));
   });
