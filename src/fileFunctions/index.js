@@ -1,6 +1,8 @@
 import checkIfFileExists from "./checkIfFileExists";
 import closeFile from "./closeFile";
 import createFile from "./createFile";
+import deleteFile from "./deleteFile";
+import listDirContent from "./listDircontent";
 import openFile from "./openFile";
 import openFileToUpdate from "./openFileToUpdate";
 import openFileToWrite from "./openFileToWrite";
@@ -21,6 +23,8 @@ const fileFunctions = {
   writeFile,
   openFileToUpdate,
   truncateFile,
-  updateFile
+  updateFile,
+  deleteFile,
+  listDirContent
 };
 export default fileFunctions;

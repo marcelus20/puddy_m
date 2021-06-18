@@ -2,11 +2,9 @@ import "regenerator-runtime/runtime";
 import createFile from "../src/fileFunctions/createFile";
 import updateFile from "../src/fileFunctions/updateFile";
 
-
-const fileName = ".data/toUpdate.file";
+const fileName = ".test-data/toUpdate.file";
 
 test("updateFile will resolve true if file exists", () => {
-  
   return expect(
     createFile(fileName, "created...").then((created) =>
       updateFile(fileName, "Update 2")
@@ -16,7 +14,7 @@ test("updateFile will resolve true if file exists", () => {
 
 test("updateFile will reject if file doesn't exist", () => {
   return expect(
-    updateFile(".data/toUpdate___.file", "Update 2")
+    updateFile(".test-data/toUpdate___.file", "Update 2")
   ).rejects.toThrow("Cannot update the file. It may not exist.");
 });
 

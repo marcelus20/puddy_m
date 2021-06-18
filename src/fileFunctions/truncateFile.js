@@ -8,7 +8,7 @@ import fs from "fs";
  */
 export default async function truncateFile(fileDescriptor) {
   return new Promise((resolve, reject) => {
-    fs.truncate(fileDescriptor, (err) => {
+    fs.ftruncate(fileDescriptor, (err) => {
       if (!err) {
         resolve(fileDescriptor);
       } else {

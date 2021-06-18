@@ -4,7 +4,7 @@
   "description": "A promise based utility library",
   "main": "index.js",
   "scripts": {
-    "test": "rm -rf .data && mkdir .data && jest",
+    "test": "rm -rf .test-data && mkdir -p .test-data/empty && jest && rm -rf .test-data",
     "start": "npm run build && babel-node index.js",
     "build": "npx babel src --out-dir lib"
   },
