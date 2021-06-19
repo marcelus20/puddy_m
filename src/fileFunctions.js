@@ -1,41 +1,12 @@
-/*import checkIfFileExists from "./checkIfFileExists";
-import closeFile from "./closeFile";
-import createFile from "./createFile";
-import deleteFile from "./deleteFile";
-import listDirContent from "./listDircontent";
-import openFile from "./openFile";
-import openFileToUpdate from "./openFileToUpdate";
-import openFileToWrite from "./openFileToWrite";
-import readFile from "./readFile";
-import truncateFile from "./truncateFile";
-import updateFile from "./updateFile";
-import writeFile from "./writeFile";
-
-
-
-const fileFunctions = {
-  checkIfFileExists,
-  closeFile,
-  createFile,
-  openFile,
-  openFileToWrite,
-  readFile,
-  writeFile,
-  openFileToUpdate,
-  truncateFile,
-  updateFile,
-  deleteFile,
-  listDirContent
-};
-export default fileFunctions;*/
-
 import {
   validateString,
   validateNotNull,
   validateNotUndefined,
+  validateTrim,
 } from "./validators";
-import { trim } from "./utils";
 import fs from "fs";
+import path from "path";
+import { rejects } from "assert";
 
 /**
  * Lists the contents of a directory (files and subdirectories)
@@ -46,7 +17,7 @@ import fs from "fs";
 export function listDirContent(dirLocation) {
   return new Promise((resolve, reject) => {
     validateString(dirLocation)
-      .then((dirLocation) => trim(dirLocation))
+      .then((dirLocation) => validateTrim(dirLocation))
       .then((trimmedDirLocation) => {
         fs.readdir(trimmedDirLocation, (err, data) => {
           if (!err && data && data.length > 0) {
@@ -308,5 +279,115 @@ export function checkIfFileExists(supposedFileLocation) {
         });
       })
       .catch((e) => reject(e));
+  });
+}
+
+/**
+ * Checks if the given parameter is a path to a directory.
+ * Resolves true if it is a directory or false if not a directory.
+ * Rejects if param isn't a string.
+ * @param {String} dirPath
+ * @returns {Promise}
+ */
+export function isDirectory(dirPath) {
+  return new Promise((resolve, reject) => {
+    validateString(dirPath)
+      .then((dirPath) => {
+        fs.stat(dirPath, (err, stat) => {
+          if (err && !stat) {
+            // If it gets here, is because directory doesn't exist.
+            reject(
+              new Error(
+                `The given directory wasn't found. Directory: ${dirPath}`
+              )
+            );
+          } else {
+            if (stat.isDirectory()) {
+              resolve(resolve(dirPath));
+            } else {
+              reject(new Error(`The ${dirPath} isn't a directory!`));
+            }
+          }
+        });
+      })
+      .catch((e) => reject(e));
+  });
+}
+
+/**
+ * Resolves dirPath if dir exists or rejects if it doesn't exist.
+ * The difference between checkIfDirExists and isDirectory is that isDirectory will assume
+ * that the file or dir exist and it will throw an error if it doesn't whereas checkIfDirExists
+ * won't throw if it doesn't exist in the file system.
+ * @param {String} dirPath
+ * @returns
+ */
+export function dirExists(dirPath) {
+  return new Promise((resolve, reject) => {
+    isDirectory(dirPath)
+      .then((isDir) => resolve(dirPath))
+      .catch((e) => {
+        reject(e);
+      });
+  });
+}
+
+/**
+ * If the dir DOESN'T exist, it will resolve the dirPath, whereas if it exists, it will reject with an error.
+ * It's the other way around of dirExists method.
+ * @param {String} dirPath
+ * @returns
+ */
+export function dirDoesntExist(dirPath) {
+  return new Promise((resolve, reject) => {
+    dirExists(dirPath)
+      .then((dirPath) => reject(new Error(`Directory already exists.`)))
+      .catch((e) => resolve(dirPath));
+  });
+}
+
+/**
+ * Creates a dir recursively. Resolves the dirPath if the creation was successfull or rejects if an error occurs
+ * @param {*} dirPath
+ * @returns
+ */
+export function createDir(dirPath) {
+  return new Promise((resolve, reject) => {
+    dirDoesntExist(dirPath)
+      .then((notExists) => {
+        fs.mkdir(dirPath, { recursive: true }, (err) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(dirPath);
+          }
+        });
+      })
+      .catch((e) =>
+        reject(new Error("Cannot create the directory. It may already exist."))
+      );
+  });
+}
+
+/**
+ *
+ * @param {*} dirPath
+ * @returns
+ */
+export function deleteDir(dirPath) {
+  return new Promise((resolve, reject) => {
+    dirExists(dirPath).then((exists) =>
+      fs.rmdir(dirPath, { recursive: true, force: true }, (err) => {
+        if (err) {
+          reject(
+            new Error(
+              `Failed to delete folder due to the following error: ${err.message}`
+            )
+          );
+        } else {
+          resolve(dirPath);
+        }
+      })
+    ).catch(e=>reject(new Error("Could not delete the folder. It may not exist.")));
   });
 }

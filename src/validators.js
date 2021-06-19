@@ -1,17 +1,3 @@
-/*import validateNotNull from "./validateNotNull";
-import validateNotUndefined from "./validateNotUndefined";
-import validateNumber from "./validateNumber";
-import validateString from "./validateString";
-
-const validators = {
-  validateNotUndefined,
-  validateNotNull,
-  validateString,
-  validateNumber,
-};
-
-export default validators;*/
-
 /**
  * Validates the argument to be not null.
  * Resolves if the variable isn't null.
@@ -84,4 +70,43 @@ export function validateString(supposedString) {
       })
       .catch((err) => reject(err));
   });
+}
+
+/**
+ * Resolves the trimmed version of the string passed as parameter or throws if the parameter isn't a string.
+ * @param {String} stringToTrim
+ */
+export function validateTrim(stringToTrim) {
+  return new Promise((resolve, reject) => {
+    validateString(stringToTrim)
+      .then((stringToTrim) => {
+        try {
+          // Resolves here.
+          resolve(stringToTrim.trim());
+        } catch (e) {
+          // This block is not ever intended to fire, since the string validation was
+          // done in the previous promise, however I'm handling it just in case.
+          // If anything goes wrong, reject it.
+          reject(e);
+        }
+      })
+      .catch((e) => reject(e));
+  });
+}
+
+/**
+ * Resolves the arg if it is not undefined. 
+ * Rejects if it's undefined as it fails the validation check. 
+ * Resolves true if NOT undefined. Resolves false if it is undefined.
+ * @param {*} supposedFunction
+ * @returns {Promise}
+ */
+export function validateFunction(supposedFunction){
+  return new Promise((resolve, reject)=>{
+    if(typeof supposedFunction != "function"){
+      reject(new TypeError("The given parameter isn't a function."))
+    }else{
+      resolve(supposedFunction)
+    }
+  })
 }

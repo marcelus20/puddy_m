@@ -11,8 +11,10 @@ const emptyDirPath = path.join(dirName, emptyDirectory);
 
 test("listDirContent will resolve a list of strings if the file system directory isn't empty.", () => {
   return expect(
-    createFile(filePath).then((created) => listDirContent(dirName))
-  ).resolves.toEqual(["empty", "sample.file"]);
+    createFile(filePath)
+    .then((created) => listDirContent(dirName))
+    .then(listOfDirContent=>listOfDirContent.reduce((acc, item)=> acc && typeof item == "string")) // Check if all items are strings
+  ).resolves.toBe(true);
 });
 
 test("listDirContent will reject if the file system directory doesn't exsist.", () => {
