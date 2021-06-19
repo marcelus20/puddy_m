@@ -1,5 +1,4 @@
-import validateNumber from "../src/validations/validateNumber";
-import 'regenerator-runtime/runtime';
+import {validateNumber} from "../src/validators";
 
 test("validateNumber will resolve when param is 1", () => {
   return expect(validateNumber(1)).resolves.toBe(1);

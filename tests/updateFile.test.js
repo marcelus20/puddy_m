@@ -1,6 +1,5 @@
-import "regenerator-runtime/runtime";
-import createFile from "../src/fileFunctions/createFile";
-import updateFile from "../src/fileFunctions/updateFile";
+
+import {createFile, updateFile} from "../src/fileFunctions";
 
 const fileName = ".test-data/toUpdate.file";
 

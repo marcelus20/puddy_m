@@ -1,5 +1,5 @@
-import "regenerator-runtime/runtime";
-import createFile from "../src/fileFunctions/createFile";
+
+import {createFile} from "../src/fileFunctions";
 
 test("createFile will resolve true if file doesn't exist", () => {
   return expect(

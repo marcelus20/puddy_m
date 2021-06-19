@@ -1,5 +1,4 @@
-import readFile from "../src/fileFunctions/readFile";
-import 'regenerator-runtime/runtime';
+import {readFile} from "../src/fileFunctions";
 
 test("readFile will reject when param is null", () => {
   return expect(readFile(null)).rejects.toThrow(

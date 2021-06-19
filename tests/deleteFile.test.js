@@ -1,6 +1,5 @@
-import "regenerator-runtime/runtime";
-import createFile from "../src/fileFunctions/createFile";
-import deleteFile from "../src/fileFunctions/deleteFile";
+
+import {deleteFile, createFile} from "../src/fileFunctions";
 
 const fileName = ".test-data/toDelete.file";
 const wrongFileName = ".test-data/toDelete___.file";

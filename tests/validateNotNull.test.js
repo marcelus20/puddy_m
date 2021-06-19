@@ -1,5 +1,4 @@
-import validateNotNull from "../src/validations/validateNotNull";
-import 'regenerator-runtime/runtime';
+import {validateNotNull} from "../src/validators";
 
 test("validateNotNull will reject when param is null", () => {
   return expect(validateNotNull(null)).rejects.toThrow(

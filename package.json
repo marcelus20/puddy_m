@@ -1,12 +1,11 @@
 {
-  "name": "puddy_m",
-  "version": "1.0.7",
+  "name": "puddy-m",
+  "version": "1.0.11",
   "description": "A promise based utility library",
   "main": "index.js",
   "scripts": {
     "test": "rm -rf .test-data && mkdir -p .test-data/empty && jest && rm -rf .test-data",
-    "start": "npm run build && babel-node index.js",
-    "build": "rm -rf lib && npx babel src --out-dir lib",
+    "build": "rm -rf lib && babel src -d lib",
     "prepublish": "npm run build && cp ./package.json lib"
   },
   "repository": {
@@ -26,9 +25,7 @@
   "devDependencies": {
     "@babel/cli": "^7.14.5",
     "@babel/core": "^7.14.5",
-    "@babel/node": "^7.14.5",
     "@babel/preset-env": "^7.14.5",
-    "jest": "^27.0.4",
-    "regenerator-runtime": "^0.13.7"
+    "jest": "^27.0.4"
   }
 }

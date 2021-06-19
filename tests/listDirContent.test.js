@@ -1,7 +1,5 @@
-import listDirContent from "../src/fileFunctions/listDircontent";
-import createFile from "../src/fileFunctions/createFile";
+import {createFile, listDirContent} from "../src/fileFunctions";
 import path from "path";
-import "regenerator-runtime/runtime";
 
 // the .data directory will be
 const dirName = ".test-data";

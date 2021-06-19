@@ -3,7 +3,7 @@
  * It won't check if parameter is indeed a string because this responsibility is for validateString.
  * @param {String} stringToTrim
  */
-export default async function trim(stringToTrim) {
+export function trim(stringToTrim) {
   return new Promise((resolve, reject) => {
     try {
       resolve(stringToTrim.trim());

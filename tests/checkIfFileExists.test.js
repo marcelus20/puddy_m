@@ -1,5 +1,5 @@
-import "regenerator-runtime/runtime";
-import checkIfFileExists from "../src/fileFunctions/checkIfFileExists";
+
+import {checkIfFileExists} from "../src/fileFunctions";
 
 test("checkIfFileExists will resolve false when param file doesn't exist", () => {
   return expect(checkIfFileExists("./nonExistingFile")).resolves.toBe(false);
@@ -22,3 +22,4 @@ test("checkIfFileExists will reject when param is not a string", () => {
     "The passed argument isn't a string."
   );
 });
+
