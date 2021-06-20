@@ -4,7 +4,7 @@ import {createFile} from "../src/fileFunctions";
 test("createFile will resolve true if file doesn't exist", () => {
   return expect(
     createFile(".test-data/existing.file", "foo-bar")
-  ).resolves.toBe(true);
+  ).resolves.toBe(".test-data/existing.file");
 });
 
 test("createFile will reject if file exists", () => {

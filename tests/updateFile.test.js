@@ -3,12 +3,12 @@ import {createFile, updateFile} from "../src/fileFunctions";
 
 const fileName = ".test-data/toUpdate.file";
 
-test("updateFile will resolve true if file exists", () => {
+test("updateFile will resolve the fileName if file exists and update was successful", () => {
   return expect(
     createFile(fileName, "created...").then((created) =>
       updateFile(fileName, "Update 2")
-    ) //Promise.resolve(true)
-  ).resolves.toBe(true);
+    ) 
+  ).resolves.toBe(fileName);
 });
 
 test("updateFile will reject if file doesn't exist", () => {
