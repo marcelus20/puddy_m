@@ -5,7 +5,6 @@ import {
   ListOfTypeValidationError,
   NotUndefinedValidationError,
   ObjectWithExistingKeyValidationError,
-  TypeValidationError,
 } from "./models/errors";
 import {
   filterResolutionParam,
@@ -15,6 +14,8 @@ import {
   validateString,
   validateType,
 } from "./validators";
+
+import regeneratorRuntime from "regenerator-runtime";
 
 /**
  * Resolves the list if all elements in it are of type specified in the "type" parameter.
@@ -33,7 +34,7 @@ import {
  * @param {Array} tuple
  * @returns
  */
-export const validateListOfType = (type, list, tuple) =>
+export const validateListOfType = async (type, list, tuple) =>
   new Promise((resolve, reject) => {
     validateString(type, [])
       .then((tuple) => validateArray(list, tuple))
@@ -66,7 +67,7 @@ export const validateListOfType = (type, list, tuple) =>
  * @param {Array} tuple
  * @returns
  */
-export const validateListOfInstance = (InstanceReference, list, tuple) =>
+export const validateListOfInstance = async (InstanceReference, list, tuple) =>
   new Promise((resolve, reject) => {
     validateNotUndefined(InstanceReference)
       .then(() => validateArray(list))

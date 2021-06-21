@@ -16,6 +16,8 @@ import {
   validateType,
 } from "./validators";
 
+import regeneratorRuntime from "regenerator-runtime";
+
 /**
  * This module is to keep only complex functions.
  * Definition of complex functions in this context is functions that uses one or more more functions in its

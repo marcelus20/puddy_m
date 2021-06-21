@@ -7,6 +7,8 @@ import {
 } from "./validators";
 import fs from "fs";
 
+import regeneratorRuntime from "regenerator-runtime";
+
 /**
  * File Functions is a special type of complex functions totaly dedicated to perform CRUD operations of files
  * and CRD (create read and delete) operations for dirs.
@@ -101,7 +103,7 @@ export const openFileToUpdate = (fileLocationAndName, tuple) =>
  * @param {Array} tuple
  * @returns { Promise }
  */
-export const openFileToWrite = (fileLocationAndName, tuple) =>
+export const openFileToWrite = async (fileLocationAndName, tuple) =>
   new Promise((resolve, reject) => {
     openFile(fileLocationAndName, "wx")
       .then((fileDescriptor) => filterResolutionParam(tuple, fileDescriptor))
@@ -117,7 +119,7 @@ export const openFileToWrite = (fileLocationAndName, tuple) =>
  * @param {Array} tuple
  * @returns {Promise}
  */
-export const readFile = (fileLocation, tuple) =>
+export const readFile = async (fileLocation, tuple) =>
   new Promise((resolve, reject) => {
     // Checks if fileLocation is a string.
     validateNotNull(fileLocation)
@@ -146,7 +148,7 @@ export const readFile = (fileLocation, tuple) =>
  * @param {Array} tuple
  * @returns {Promise}
  */
-export const truncateFile = (fileDescriptor, tuple) =>
+export const truncateFile = async (fileDescriptor, tuple) =>
   new Promise((resolve, reject) => {
     fs.ftruncate(fileDescriptor, (err) => {
       if (!err) {
@@ -166,7 +168,7 @@ export const truncateFile = (fileDescriptor, tuple) =>
  * @param {Array} tuple
  * @returns {Promise}
  */
-export const updateFile = (fileLocationAndName, content, tuple) =>
+export const updateFile = async (fileLocationAndName, content, tuple) =>
   new Promise((resolve, reject) => {
     validateNotUndefined(content)
       .then(validateNotNull)
@@ -191,7 +193,7 @@ export const updateFile = (fileLocationAndName, content, tuple) =>
  * @param {Array} tuple
  * @returns {Promise}
  */
-export const writeFile = (fileDescriptor, content = "--foo-bar--", tuple) =>
+export const writeFile = async (fileDescriptor, content = "--foo-bar--", tuple) =>
   new Promise((resolve, reject) => {
     validateNotNull(content)
       .then(validateNotUndefined)
@@ -220,7 +222,7 @@ export const writeFile = (fileDescriptor, content = "--foo-bar--", tuple) =>
  * @param {Array} tuple
  * @returns {Promise}
  */
-export const deleteFile = (fileLocationAndName, tuple) =>
+export const deleteFile = async (fileLocationAndName, tuple) =>
   new Promise((resolve, reject) => {
     validateString(fileLocationAndName)
       .then((fileLocationAndName) => fileExists(fileLocationAndName))
@@ -253,7 +255,7 @@ export const deleteFile = (fileLocationAndName, tuple) =>
  * @param {Array} tuple
  * @returns {Promise}
  */
-export const createFile = (fileLocationAndName, content = "", tuple) =>
+export const createFile = async (fileLocationAndName, content = "", tuple) =>
   new Promise((resolve, reject) => {
     fileDoesntExist(fileLocationAndName)
       .then(openFileToWrite)
@@ -276,7 +278,7 @@ export const createFile = (fileLocationAndName, content = "", tuple) =>
  * @param {Array} tuple
  * @returns {Promise}
  */
-export const closeFile = (fileDescriptor, tuple) =>
+export const closeFile = async (fileDescriptor, tuple) =>
   new Promise((resolve, reject) => {
     //validate file descriptor to not null
     validateNotNull(fileDescriptor)
@@ -305,7 +307,7 @@ export const closeFile = (fileDescriptor, tuple) =>
  * @param {Array} tuple
  * @returns {Promise}
  */
-export const fileExists = (supposedFileLocation, tuple) =>
+export const fileExists = async (supposedFileLocation, tuple) =>
   new Promise((resolve, reject) => {
     validateString(supposedFileLocation)
       .then(
@@ -333,7 +335,7 @@ export const fileExists = (supposedFileLocation, tuple) =>
  * @param {Array} tuple Optional
  * @returns {Promise}
  */
-export const fileDoesntExist = (supposedFileLocation, tuple) =>
+export const fileDoesntExist = async (supposedFileLocation, tuple) =>
   new Promise((resolve, reject) => {
     fileExists(supposedFileLocation)
       .then(() => reject(new Error("The file exists.")))
@@ -350,7 +352,7 @@ export const fileDoesntExist = (supposedFileLocation, tuple) =>
  * @param {Array} tuple
  * @returns {Promise}
  */
-export const isDirectory = (dirPath, tuple) =>
+export const isDirectory = async (dirPath, tuple) =>
   new Promise((resolve, reject) => {
     validateString(dirPath)
       .then((dirPath) => {
@@ -383,7 +385,7 @@ export const isDirectory = (dirPath, tuple) =>
  * @param {Array} tuple
  * @returns {Promise}
  */
-export const dirExists = (dirPath, tuple) =>
+export const dirExists = async (dirPath, tuple) =>
   new Promise((resolve, reject) => {
     isDirectory(dirPath)
       .then(() => filterResolutionParam(tuple, dirPath))
@@ -398,7 +400,7 @@ export const dirExists = (dirPath, tuple) =>
  * @param {Array} tuple
  * @returns {Promise}
  */
-export const dirDoesntExist = (dirPath, tuple) =>
+export const dirDoesntExist = async (dirPath, tuple) =>
   new Promise((resolve, reject) => {
     dirExists(dirPath)
       .then(() => reject(new Error(`Directory already exists.`)))
@@ -413,7 +415,7 @@ export const dirDoesntExist = (dirPath, tuple) =>
  * @param {Array} tuple
  * @returns
  */
-export const createDir = (dirPath, tuple) =>
+export const createDir = async (dirPath, tuple) =>
   new Promise((resolve, reject) => {
     dirDoesntExist(dirPath)
       .then(() => {

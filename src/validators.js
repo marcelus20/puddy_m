@@ -13,6 +13,8 @@ import {
   TypeValidationError,
 } from "./models/errors";
 
+import regeneratorRuntime from "regenerator-runtime";
+
 /**
  * This module is to keep only simple functions.
  * Definition of simple functions in this context is functions that DON'T use any other functions as part of its logic
@@ -34,7 +36,7 @@ import {
  * @param {Array} tuple
  * @returns {Promise}
  */
-export const validateNotNull = (supposedNotNullArg, tuple) =>
+export const validateNotNull = async (supposedNotNullArg, tuple) =>
   new Promise((resolve, reject) => {
     if (supposedNotNullArg == null) {
       reject(new NotNullValidationError());
@@ -53,7 +55,7 @@ export const validateNotNull = (supposedNotNullArg, tuple) =>
  * @param {Array} tuple
  * @returns { Promise }
  */
-export const validateNotUndefined = (supposedNotUndefinedArg, tuple) =>
+export const validateNotUndefined = async(supposedNotUndefinedArg, tuple) =>
   new Promise((resolve, reject) => {
     validateNotType(PrimitiveTypes.UNDEFINED, supposedNotUndefinedArg, tuple)
       .then(resolve)
@@ -69,7 +71,7 @@ export const validateNotUndefined = (supposedNotUndefinedArg, tuple) =>
  * @param {Array} tuple
  * @returns {Promise}
  */
-export const validateNumber = (supposedNumber, tuple) =>
+export const validateNumber = async (supposedNumber, tuple) =>
   new Promise((resolve, reject) => {
     validateType(PrimitiveTypes.NUMBER, supposedNumber, tuple)
       .then(resolve)
@@ -83,7 +85,7 @@ export const validateNumber = (supposedNumber, tuple) =>
  * @param {Array} tuple
  * @returns {Promise}
  */
-export const validateBoolean = (supposedBoolean, tuple) =>
+export const validateBoolean = async (supposedBoolean, tuple) =>
   new Promise((resolve, reject) => {
     validateType(PrimitiveTypes.BOOLEAN, supposedBoolean, tuple)
       .then(resolve)
@@ -104,7 +106,7 @@ export const validateBoolean = (supposedBoolean, tuple) =>
  * @param {Array} tuple
  * @returns
  */
-export const validateType = (type, arg, tuple) =>
+export const validateType = async (type, arg, tuple) =>
   new Promise((resolve, reject) => {
     if (typeof arg == type) {
       filterResolutionParam(tuple, arg).then(resolve).catch(reject);
@@ -113,14 +115,14 @@ export const validateType = (type, arg, tuple) =>
     }
   });
 
-export const validateNotType = (type, arg, tuple) =>
+export const validateNotType = async (type, arg, tuple) =>
   new Promise((resolve, reject) => {
     validateType(type, arg)
       .then(() => reject(new NotTypeValidationError(arg, type)))
       .catch(() => filterResolutionParam(tuple, arg).then(resolve));
   });
 
-export const validateInstance = (InstanceRef, supposedInstance, tuple) =>
+export const validateInstance = async (InstanceRef, supposedInstance, tuple) =>
   new Promise((resolve, reject) => {
     if (supposedInstance instanceof InstanceRef) {
       filterResolutionParam(tuple, supposedInstance).then(resolve);
@@ -129,7 +131,7 @@ export const validateInstance = (InstanceRef, supposedInstance, tuple) =>
     }
   });
 
-export const validateNotInstance = (InstanceRef, supposedNotInstance, tuple) =>
+export const validateNotInstance = async (InstanceRef, supposedNotInstance, tuple) =>
   new Promise((resolve, reject) => {
     validateInstance(InstanceRef, supposedNotInstance, tuple)
       .then(() =>
@@ -147,7 +149,7 @@ export const validateNotInstance = (InstanceRef, supposedNotInstance, tuple) =>
  * @param {Array} tuple
  * @returns {Promise}
  */
-export const validateString = (supposedString, tuple) =>
+export const validateString = async (supposedString, tuple) =>
   new Promise((resolve, reject) => {
     validateType(PrimitiveTypes.STRING, supposedString, tuple)
       .then(resolve)
@@ -162,7 +164,7 @@ export const validateString = (supposedString, tuple) =>
  * @param {Array} tuple
  * @returns {Promise}
  */
-export const validateFunction = (supposedFunction, tuple) =>
+export const validateFunction = async (supposedFunction, tuple) =>
   new Promise((resolve, reject) => {
     if (typeof supposedFunction != "function") {
       reject(new FunctionValidationError());
@@ -183,7 +185,7 @@ export const validateFunction = (supposedFunction, tuple) =>
  * @param {*} singleValue
  * @returns {Promise}
  */
-export const filterResolutionParam = (tuple, singleValue) =>
+export const filterResolutionParam = async (tuple, singleValue) =>
   new Promise((resolve) => {
     if (Array.isArray(tuple)) {
       resolve([...tuple, singleValue]); // Concat the old values from the tuple with the new singleValue.
@@ -198,7 +200,7 @@ export const filterResolutionParam = (tuple, singleValue) =>
  * @param {Array} tuple
  * @returns {Promise}
  */
-export const validateArray = (supposedArray, tuple) =>
+export const validateArray = async (supposedArray, tuple) =>
   new Promise((resolve, reject) => {
     if (!Array.isArray(supposedArray)) {
       reject(new ArrayValidationError());
