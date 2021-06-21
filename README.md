@@ -7,16 +7,27 @@ Puddy-m is a JavaScript library to deal with simple utility validation checks, u
 ### Why this lib was created
 To reduce the number of inline validations and re-assignment to variables. Using puddy-m, you will carry out the same task using a promise-based approach, making your code more legible, having control of what's going on in each step. 
 
-#### Example
-Say you received a variable and you want to check if the variable isn't undefined or null, an approach would be to reassign the variable making a series of ternary expression check, like so:
+### Example
+Say you received different variables and you want to check if the they are string, or not undefined, or boolean, etc, an approach without this library would be to reassign the variable making a series of ternary expression check, like so:
 
 ```javascript
+// Not using puddy-m library
+function f(a, b, c, d, e, callbackSuccess, callbackError){
+  a = typeof a != "undefined" ? a : false;
+  b = typeof b == "string" ? b : false;
+  c = typeof c == "number" ? c : false;
+  d = typeof d == "boolean" ? d : false;
+  e = typeof e != null ? e : false;
+  callbackSuccess = typeof callbackSuccess == "function" ? callbackSuccess : false;
+  callbackError = typeof callbackError == "function" ? callbackError : false;
 
-function f(x, y){
-  x = typeof x != "undefined" && x != null ? x : false
-  b = typeof y != "undefined" && y != null ? y : false
-
-  if(x && y){/** Do your logic here if x passed the test*//}
+  if(x && y && c && d && e, callbackSuccess){
+    calbackSuccess();
+  }else{
+    if(callBackError){
+      callbackError("Worked");
+    }
+  }
 }
 
 ```
@@ -26,34 +37,29 @@ With puddy-m, the idea is to break down validations into separate steps using pr
 
 ```javascript
 
-function f(x, y){
-  validateNotUndefined(x)
-    .then(validateNotNull)
-    .then(() => validateNotUndefined(y))
-    .then(validateNotNull)
-    .then(()=>{
-        // if code gets here, it's because validation went through. 
-        // Do your logic
-    }).catch(e=>{
-       //Handle if validation above failed. 
+// Using puddy-m library
+import {
+  validateNotUndefined, 
+  validateString, 
+  validateNumber, 
+  validateBoolean, 
+  validateFunction, 
+  validateNotNull
+} from "puddy-m/lib/validators";
+
+
+function f(a, b, c, d, e, callbackSuccess, callbackError){
+  validateNotUndefined(a, [])
+    .then(tuple=>validateString(b, tuple)) // tuple at this point is [ a ]
+    .then(tuple=>validateNumber(c, tuple)) // tuple at this point is [ a, b ]
+    .then(tuple=>validateBoolean(d, tuple)) // tuple at this point is [ a, b, c ]
+    .then(tuple=>validateNotNull(e, tuple)) // tuple at this point is [ a, b, c, d ]
+    .then(tuple=>validateFunction(callbackSuccess, tuple)) // tuple at this point is [ a, b, c, d, e ]
+    .then([a, b, c, d, e, callbackSuccess] =>callbackSuccess("Worked")) // Tuple was distructured to [a, b, c, d, e, callbackSuccess]
+    .catch(e=>{
+      validateFunction(callbackError).then(callbackError)
+      return e
     })
-
-}
-
-// Also works with await
-async function g(x, y) {
-  const { validatedX, validatedY } = await validateNotUndefined(x)
-    .then(validateNotNull)
-    .then(() => validateNotUndefined(y))
-    .then(validateNotNull)
-    .then(() => ({
-      validatedX: x,
-      validatedY: y,
-    })).catch(e=>e);
-
-  if(validatedX && validatedY){
-    // Do your logic here. 
-  }
 }
 
 ```

@@ -1,5 +1,4 @@
-
-import {createFile} from "../src/fileFunctions";
+import { createFile } from "../src/fileFunctions";
 
 test("createFile will resolve true if file doesn't exist", () => {
   return expect(
@@ -14,13 +13,11 @@ test("createFile will reject if file exists", () => {
 });
 
 test("createFile will reject if first parameter isn't string", () => {
-  return expect(createFile(895, "foo-bar")).rejects.toThrow(
-    "The passed argument isn't a string."
-  );
+  return expect(createFile(895, "foo-bar")).rejects.toThrow("");
 });
 
 test("createFile will reject if first parameter is undefined", () => {
   return expect(createFile(undefined, "foo-bar")).rejects.toThrow(
-    "The passed argument isn't a string."
+    "Parameter must be a string."
   );
 });

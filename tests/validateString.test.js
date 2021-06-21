@@ -1,38 +1,38 @@
-import {validateString} from "../src/validators";
+import { validateString } from "../src/validators";
 
 test("validateString will reject when param is 1", () => {
   return expect(validateString(1)).rejects.toThrow(
-    "The passed argument isn't a string."
+    "Parameter must be a string."
   );
 });
 
 test("validateString will reject when param is boolean", () => {
   return expect(validateString(true)).rejects.toThrow(
-    "The passed argument isn't a string."
+    "Parameter must be a string."
   );
 });
 
 test("validateString will reject when param is an object", () => {
   return expect(validateString({})).rejects.toThrow(
-    "The passed argument isn't a string."
+    "Parameter must be a string."
   );
 });
 
 test("validateString will reject when param is an Array", () => {
   return expect(validateString([1, 4, 5])).rejects.toThrow(
-    "The passed argument isn't a string."
+    "Parameter must be a string."
   );
 });
 
 test("validateString will reject when param is function", () => {
   return expect(validateString(() => {})).rejects.toThrow(
-    "The passed argument isn't a string."
+    "Parameter must be a string."
   );
 });
 
 test("validateString will reject when param is class", () => {
   return expect(validateString(class {})).rejects.toThrow(
-    "The passed argument isn't a string."
+    "Parameter must be a string."
   );
 });
 

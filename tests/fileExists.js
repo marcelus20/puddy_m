@@ -1,8 +1,9 @@
-
-import {createFile, fileExists} from "../src/fileFunctions";
+import { createFile, fileExists } from "../src/fileFunctions";
 
 test("fileExists will reject when param file doesn't exist", () => {
-  return expect(fileExists("./nonExistingFile")).rejects.toThrow("File doesn't exist.");
+  return expect(fileExists("./nonExistingFile")).rejects.toThrow(
+    "File doesn't exist."
+  );
 });
 
 test("fileExists will resolve true when param file doesn't exist", () => {
@@ -25,9 +26,14 @@ test("fileExists will reject when param is not a string", () => {
 
 test("fileExists will resolve to a tuple conatining the parameters of the chained promises if the tuple parameter is passed.", () => {
   return expect(
-    createFile(".test-data/toCheckIfFileExists.file", "Some content here!",[])
-    .then(tuple=>fileExists(".test-data/toCheckIfFileExists.file", tuple))
-    .then(tuple=>fileExists(".test-data/toCheckIfFileExists.file", tuple))
-    .then(tuple=>fileExists(".test-data/toCheckIfFileExists.file", tuple))
-    ).resolves.toEqual([".test-data/toCheckIfFileExists.file",".test-data/toCheckIfFileExists.file",".test-data/toCheckIfFileExists.file",".test-data/toCheckIfFileExists.file"]);
+    createFile(".test-data/toCheckIfFileExists.file", "Some content here!", [])
+      .then((tuple) => fileExists(".test-data/toCheckIfFileExists.file", tuple))
+      .then((tuple) => fileExists(".test-data/toCheckIfFileExists.file", tuple))
+      .then((tuple) => fileExists(".test-data/toCheckIfFileExists.file", tuple))
+  ).resolves.toEqual([
+    ".test-data/toCheckIfFileExists.file",
+    ".test-data/toCheckIfFileExists.file",
+    ".test-data/toCheckIfFileExists.file",
+    ".test-data/toCheckIfFileExists.file",
+  ]);
 });

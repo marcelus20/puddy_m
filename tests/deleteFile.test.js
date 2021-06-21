@@ -1,5 +1,4 @@
-
-import {deleteFile, createFile} from "../src/fileFunctions";
+import { deleteFile, createFile } from "../src/fileFunctions";
 
 const fileName = ".test-data/toDelete.file";
 const wrongFileName = ".test-data/toDelete___.file";
@@ -17,13 +16,11 @@ test("deleteFile will reject if file doesn't exist", () => {
 });
 
 test("deleteFile will reject if parameter isn't string", () => {
-  return expect(deleteFile(895)).rejects.toThrow(
-    "The passed argument isn't a string."
-  );
+  return expect(deleteFile(895)).rejects.toThrow("Parameter must be a string.");
 });
 
 test("deleteFile will reject if first parameter is undefined", () => {
   return expect(deleteFile(undefined)).rejects.toThrow(
-    "The passed argument isn't a string."
+    "Parameter must be a string."
   );
 });

@@ -17,4 +17,3 @@ test("createDir should throw when folder already exists", () => {
     "Cannot create the directory. It may already exist."
   );
 });
-

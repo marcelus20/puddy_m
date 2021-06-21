@@ -1,3 +1,4 @@
+import { validateObject } from "../src/complexValidators";
 import {
   createDir,
   createFile,
@@ -10,6 +11,13 @@ import {
   updateFile,
 } from "../src/fileFunctions";
 import {
+  validateListOfInstance,
+  validateListOfType,
+} from "../src/listValidators";
+import {
+  validateBoolean,
+  validateInstance,
+  validateNotInstance,
   validateNotNull,
   validateNotUndefined,
   validateNumber,
@@ -43,6 +51,12 @@ test("functions will resolve to a tuple conatining the parameters of the chained
       .then((tuple) => validateNotUndefined("Bar", tuple))
       .then((tuple) => validateNumber(1, tuple))
       .then((tuple) => validateString("string-example", tuple))
+      .then((tuple) => validateBoolean(true, tuple))
+      .then((tuple) => validateObject({}, tuple))
+      .then((tuple) => validateNotInstance(Array, "", tuple))
+      .then((tuple) => validateInstance(Array, [""], tuple))
+      .then((tuple) => validateListOfType("object", [{}], tuple))
+      .then((tuple) => validateListOfInstance(Array, [[], []], tuple))
   ).resolves.toEqual([
     ".test-data",
     ".test-data/toCreateToTestTuple.file",
@@ -61,5 +75,11 @@ test("functions will resolve to a tuple conatining the parameters of the chained
     "Bar",
     1,
     "string-example",
+    true,
+    {},
+    "",
+    [""],
+    [{}],
+    [[], []],
   ]);
 });

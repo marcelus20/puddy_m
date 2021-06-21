@@ -1,4 +1,4 @@
-import {validateNotUndefined} from "../src/validators";
+import { validateNotUndefined } from "../src/validators";
 
 test("validateNotUndefined will resolve when param is not undefined", () => {
   return expect(validateNotUndefined(1)).resolves.toBe(1);

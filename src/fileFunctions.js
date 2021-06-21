@@ -8,6 +8,11 @@ import {
 import fs from "fs";
 
 /**
+ * File Functions is a special type of complex functions totaly dedicated to perform CRUD operations of files
+ * and CRD (create read and delete) operations for dirs.
+ */
+
+/**
  * Lists the contents of a directory (files and subdirectories)
  * It doesn't list the contests of a subdirectory
  * Resolves the list if directory is not empty or rejects if empty or an error occurs.
@@ -15,8 +20,8 @@ import fs from "fs";
  * @param {Array} tuple
  * @returns {Promise}
  */
-export function listDirContent(dirLocation, tuple) {
-  return new Promise((resolve, reject) => {
+export const listDirContent = (dirLocation, tuple) =>
+  new Promise((resolve, reject) => {
     validateString(dirLocation)
       .then(validateTrim)
       .then(
@@ -43,7 +48,6 @@ export function listDirContent(dirLocation, tuple) {
       .then(resolve)
       .catch(reject);
   });
-}
 
 /**
  * Resolves the fileDescriptor when file is open or rejects with an error.
@@ -52,8 +56,8 @@ export function listDirContent(dirLocation, tuple) {
  * @param {Array} tuple
  * @returns {Promise}
  */
-export function openFile(fileLocationAndName, flag = "r", tuple) {
-  return new Promise((resolve, reject) => {
+export const openFile = (fileLocationAndName, flag = "r", tuple) =>
+  new Promise((resolve, reject) => {
     // check if the fileLocationAndName is a string.
     validateString(fileLocationAndName)
       .then(() => validateString(flag))
@@ -74,7 +78,6 @@ export function openFile(fileLocationAndName, flag = "r", tuple) {
       .then(resolve)
       .catch(reject);
   });
-}
 
 /**
  * Resolves if found a file descriptor
@@ -83,14 +86,13 @@ export function openFile(fileLocationAndName, flag = "r", tuple) {
  * @param {Array} tuple
  * @returns { Promise }
  */
-export function openFileToUpdate(fileLocationAndName, tuple) {
-  return new Promise((resolve, reject) => {
+export const openFileToUpdate = (fileLocationAndName, tuple) =>
+  new Promise((resolve, reject) => {
     openFile(fileLocationAndName, "r+")
       .then((fileDescriptor) => filterResolutionParam(tuple, fileDescriptor))
       .then(resolve)
       .catch(reject);
   });
-}
 
 /**
  * Resolves if found a file descriptor
@@ -99,14 +101,13 @@ export function openFileToUpdate(fileLocationAndName, tuple) {
  * @param {Array} tuple
  * @returns { Promise }
  */
-export function openFileToWrite(fileLocationAndName, tuple) {
-  return new Promise((resolve, reject) => {
+export const openFileToWrite = (fileLocationAndName, tuple) =>
+  new Promise((resolve, reject) => {
     openFile(fileLocationAndName, "wx")
       .then((fileDescriptor) => filterResolutionParam(tuple, fileDescriptor))
       .then(resolve)
       .catch(reject);
   });
-}
 
 /**
  * Reads a file and resolves the content of the file.
@@ -116,10 +117,11 @@ export function openFileToWrite(fileLocationAndName, tuple) {
  * @param {Array} tuple
  * @returns {Promise}
  */
-export function readFile(fileLocation, tuple) {
-  return new Promise((resolve, reject) => {
+export const readFile = (fileLocation, tuple) =>
+  new Promise((resolve, reject) => {
     // Checks if fileLocation is a string.
-    validateString(fileLocation)
+    validateNotNull(fileLocation)
+      .then((fileLocation) => validateString(fileLocation))
       .then(
         (fileLocation) =>
           new Promise((res, rej) => {
@@ -136,7 +138,6 @@ export function readFile(fileLocation, tuple) {
       .then(resolve)
       .catch(reject);
   });
-}
 
 /**
  * Resolves if there is no errors trucating the file.
@@ -145,8 +146,8 @@ export function readFile(fileLocation, tuple) {
  * @param {Array} tuple
  * @returns {Promise}
  */
-export function truncateFile(fileDescriptor, tuple) {
-  return new Promise((resolve, reject) => {
+export const truncateFile = (fileDescriptor, tuple) =>
+  new Promise((resolve, reject) => {
     fs.ftruncate(fileDescriptor, (err) => {
       if (!err) {
         filterResolutionParam(tuple, fileDescriptor)
@@ -157,7 +158,6 @@ export function truncateFile(fileDescriptor, tuple) {
       }
     });
   });
-}
 
 /**
  * Resolves true if the file was updated or rejects if an error was encountered.
@@ -166,17 +166,15 @@ export function truncateFile(fileDescriptor, tuple) {
  * @param {Array} tuple
  * @returns {Promise}
  */
-export function updateFile(fileLocationAndName, content, tuple) {
-  return new Promise((resolve, reject) => {
-    validateNotNull(content)
-      .then(validateNotUndefined)
+export const updateFile = (fileLocationAndName, content, tuple) =>
+  new Promise((resolve, reject) => {
+    validateNotUndefined(content)
+      .then(validateNotNull)
       .then(() => fileExists(fileLocationAndName))
       .then(openFileToUpdate) // Only existing files can be updated
       .then(truncateFile)
       .then((fileDescriptor) => writeFile(fileDescriptor, content))
-      .then(() =>
-        filterResolutionParam(tuple, fileLocationAndName)
-      )
+      .then(() => filterResolutionParam(tuple, fileLocationAndName))
       .then(resolve)
       .catch((e) =>
         e.message.includes("exist")
@@ -184,7 +182,6 @@ export function updateFile(fileLocationAndName, content, tuple) {
           : reject(e)
       );
   });
-}
 
 /**
  * Writes content to a file and resolves true if it worked.
@@ -194,8 +191,8 @@ export function updateFile(fileLocationAndName, content, tuple) {
  * @param {Array} tuple
  * @returns {Promise}
  */
-export function writeFile(fileDescriptor, content = "--foo-bar--", tuple) {
-  return new Promise((resolve, reject) => {
+export const writeFile = (fileDescriptor, content = "--foo-bar--", tuple) =>
+  new Promise((resolve, reject) => {
     validateNotNull(content)
       .then(validateNotUndefined)
       .then(
@@ -216,7 +213,6 @@ export function writeFile(fileDescriptor, content = "--foo-bar--", tuple) {
       .then(resolve)
       .catch(reject);
   });
-}
 
 /**
  * Resolves true if the file was successfully deleted or rejects an error if it failed for any reason.
@@ -224,9 +220,10 @@ export function writeFile(fileDescriptor, content = "--foo-bar--", tuple) {
  * @param {Array} tuple
  * @returns {Promise}
  */
-export function deleteFile(fileLocationAndName, tuple) {
-  return new Promise((resolve, reject) => {
-    fileExists(fileLocationAndName)
+export const deleteFile = (fileLocationAndName, tuple) =>
+  new Promise((resolve, reject) => {
+    validateString(fileLocationAndName)
+      .then((fileLocationAndName) => fileExists(fileLocationAndName))
       .then(
         (fileLocation) =>
           new Promise((res, rej) => {
@@ -239,9 +236,7 @@ export function deleteFile(fileLocationAndName, tuple) {
             });
           })
       )
-      .then((deletedLocation) =>
-        filterResolutionParam(tuple, deletedLocation)
-      )
+      .then((deletedLocation) => filterResolutionParam(tuple, deletedLocation))
       .then(resolve)
       .catch((e) =>
         e.message.includes("exist")
@@ -249,7 +244,6 @@ export function deleteFile(fileLocationAndName, tuple) {
           : reject(e)
       );
   });
-}
 
 /**
  * Resolves if the file is successfully created.
@@ -259,14 +253,12 @@ export function deleteFile(fileLocationAndName, tuple) {
  * @param {Array} tuple
  * @returns {Promise}
  */
-export function createFile(fileLocationAndName, content = "", tuple) {
-  return new Promise((resolve, reject) => {
+export const createFile = (fileLocationAndName, content = "", tuple) =>
+  new Promise((resolve, reject) => {
     fileDoesntExist(fileLocationAndName)
       .then(openFileToWrite)
       .then((fileDescriptor) => writeFile(fileDescriptor, content))
-      .then(() =>
-        filterResolutionParam(tuple, fileLocationAndName)
-      ) // resolves the fileLocationAndName instead of the fileDescriptor
+      .then(() => filterResolutionParam(tuple, fileLocationAndName)) // resolves the fileLocationAndName instead of the fileDescriptor
       .then(resolve)
       .catch((e) =>
         e.message.includes("exist")
@@ -276,7 +268,6 @@ export function createFile(fileLocationAndName, content = "", tuple) {
           : reject(e)
       );
   });
-}
 
 /**
  * Closes a file by a given file descriptor
@@ -285,8 +276,8 @@ export function createFile(fileLocationAndName, content = "", tuple) {
  * @param {Array} tuple
  * @returns {Promise}
  */
-export function closeFile(fileDescriptor, tuple) {
-  return new Promise((resolve, reject) => {
+export const closeFile = (fileDescriptor, tuple) =>
+  new Promise((resolve, reject) => {
     //validate file descriptor to not null
     validateNotNull(fileDescriptor)
       .then(validateNotUndefined)
@@ -306,7 +297,6 @@ export function closeFile(fileDescriptor, tuple) {
       .then(resolve)
       .catch(reject);
   });
-}
 
 /**
  * Resolves true if file exists. Resolves false if file doesn't exist.
@@ -315,8 +305,8 @@ export function closeFile(fileDescriptor, tuple) {
  * @param {Array} tuple
  * @returns {Promise}
  */
-export function fileExists(supposedFileLocation, tuple) {
-  return new Promise((resolve, reject) => {
+export const fileExists = (supposedFileLocation, tuple) =>
+  new Promise((resolve, reject) => {
     validateString(supposedFileLocation)
       .then(
         (supposedFileLocation) =>
@@ -334,7 +324,6 @@ export function fileExists(supposedFileLocation, tuple) {
       .then(resolve)
       .catch(reject);
   });
-}
 
 /**
  * Resolves the supposedFileLocation if it DOESN'T exist.
@@ -344,17 +333,14 @@ export function fileExists(supposedFileLocation, tuple) {
  * @param {Array} tuple Optional
  * @returns {Promise}
  */
-export function fileDoesntExist(supposedFileLocation, tuple) {
-  return new Promise((resolve, reject) => {
+export const fileDoesntExist = (supposedFileLocation, tuple) =>
+  new Promise((resolve, reject) => {
     fileExists(supposedFileLocation)
       .then(() => reject(new Error("The file exists.")))
       .catch(() =>
-        filterResolutionParam(tuple, supposedFileLocation).then(
-          resolve
-        )
+        filterResolutionParam(tuple, supposedFileLocation).then(resolve)
       );
   });
-}
 
 /**
  * Checks if the given parameter is a path to a directory.
@@ -364,8 +350,8 @@ export function fileDoesntExist(supposedFileLocation, tuple) {
  * @param {Array} tuple
  * @returns {Promise}
  */
-export function isDirectory(dirPath, tuple) {
-  return new Promise((resolve, reject) => {
+export const isDirectory = (dirPath, tuple) =>
+  new Promise((resolve, reject) => {
     validateString(dirPath)
       .then((dirPath) => {
         fs.stat(dirPath, (err, stat) => {
@@ -378,9 +364,7 @@ export function isDirectory(dirPath, tuple) {
             );
           } else {
             if (stat.isDirectory()) {
-              filterResolutionParam(tuple, dirPath)
-                .then(resolve)
-                .catch(reject);
+              filterResolutionParam(tuple, dirPath).then(resolve).catch(reject);
             } else {
               reject(new Error(`The ${dirPath} isn't a directory!`));
             }
@@ -389,7 +373,6 @@ export function isDirectory(dirPath, tuple) {
       })
       .catch(reject);
   });
-}
 
 /**
  * Resolves dirPath if dir exists or rejects if it doesn't exist.
@@ -400,14 +383,13 @@ export function isDirectory(dirPath, tuple) {
  * @param {Array} tuple
  * @returns {Promise}
  */
-export function dirExists(dirPath, tuple) {
-  return new Promise((resolve, reject) => {
+export const dirExists = (dirPath, tuple) =>
+  new Promise((resolve, reject) => {
     isDirectory(dirPath)
       .then(() => filterResolutionParam(tuple, dirPath))
       .then(resolve)
       .catch(reject);
   });
-}
 
 /**
  * If the dir DOESN'T exist, it will resolve the dirPath, whereas if it exists, it will reject with an error.
@@ -416,17 +398,14 @@ export function dirExists(dirPath, tuple) {
  * @param {Array} tuple
  * @returns {Promise}
  */
-export function dirDoesntExist(dirPath, tuple) {
-  return new Promise((resolve, reject) => {
+export const dirDoesntExist = (dirPath, tuple) =>
+  new Promise((resolve, reject) => {
     dirExists(dirPath)
       .then(() => reject(new Error(`Directory already exists.`)))
       .catch((e) =>
-        filterResolutionParam(tuple, dirPath)
-          .then(resolve)
-          .catch(reject)
+        filterResolutionParam(tuple, dirPath).then(resolve).catch(reject)
       );
   });
-}
 
 /**
  * Creates a dir recursively. Resolves the dirPath if the creation was successfull or rejects if an error occurs
@@ -434,17 +413,15 @@ export function dirDoesntExist(dirPath, tuple) {
  * @param {Array} tuple
  * @returns
  */
-export function createDir(dirPath, tuple) {
-  return new Promise((resolve, reject) => {
+export const createDir = (dirPath, tuple) =>
+  new Promise((resolve, reject) => {
     dirDoesntExist(dirPath)
       .then(() => {
         fs.mkdir(dirPath, { recursive: true }, (err) => {
           if (err) {
             reject(err);
           } else {
-            filterResolutionParam(tuple, dirPath)
-              .then(resolve)
-              .catch(reject);
+            filterResolutionParam(tuple, dirPath).then(resolve).catch(reject);
           }
         });
       })
@@ -452,7 +429,6 @@ export function createDir(dirPath, tuple) {
         reject(new Error("Cannot create the directory. It may already exist."))
       );
   });
-}
 
 /**
  * Deletes a directory if it exists.
@@ -462,8 +438,8 @@ export function createDir(dirPath, tuple) {
  * @param {Array} tuple
  * @returns {Promise}
  */
-export function deleteDir(dirPath, tuple) {
-  return new Promise((resolve, reject) => {
+export const deleteDir = (dirPath, tuple) =>
+  new Promise((resolve, reject) => {
     dirExists(dirPath)
       .then(() =>
         fs.rmdir(dirPath, { recursive: true, force: true }, (err) => {
@@ -474,9 +450,7 @@ export function deleteDir(dirPath, tuple) {
               )
             );
           } else {
-            filterResolutionParam(tuple, dirPath)
-              .then(resolve)
-              .catch(reject);
+            filterResolutionParam(tuple, dirPath).then(resolve).catch(reject);
           }
         })
       )
@@ -484,4 +458,3 @@ export function deleteDir(dirPath, tuple) {
         reject(new Error("Could not delete the folder. It may not exist."))
       );
   });
-}

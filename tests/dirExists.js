@@ -13,6 +13,7 @@ test("dirExists will throw if parameter is a path to a file", () => {
 });
 
 test("dirExists will throw if parameter is a path to an inexisting dir or file", () => {
-  return expect(dirExists(".test-data/inexistingDir1")).rejects.toThrow(`The given directory wasn't found. Directory: .test-data/inexistingDir1`);
+  return expect(dirExists(".test-data/inexistingDir1")).rejects.toThrow(
+    `The given directory wasn't found. Directory: .test-data/inexistingDir1`
+  );
 });
-
