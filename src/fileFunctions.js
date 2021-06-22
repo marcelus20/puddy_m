@@ -8,6 +8,7 @@ import {
 import fs from "fs";
 
 import regeneratorRuntime from "regenerator-runtime";
+import { ConditionalByMessageError, NotExistingFileError, ListDirContentError, TruncateFileError, UpdateFileError, ConditionalByNameError, DeletingFileError, CreatingFileError, ExistingFileError, DirectoryNotFoundError, IsDirectoryError, ExistingDirError, CreatingDirError, DeletingDirError } from "./models/errors";
 
 /**
  * File Functions is a special type of complex functions totaly dedicated to perform CRUD operations of files
@@ -34,9 +35,7 @@ export const listDirContent = (dirLocation, tuple) =>
                 res(listOfFilesAndDirs);
               } else if (!err && listOfFilesAndDirs.length == 0) {
                 rej(
-                  new Error(
-                    `No files or folders were found in this directory. Directory location: ${trimmedDirLocation}`
-                  )
+                  new ListDirContentError(trimmedDirLocation)
                 );
               } else {
                 rej(err);
@@ -156,7 +155,7 @@ export const truncateFile = async (fileDescriptor, tuple) =>
           .then(resolve)
           .catch(reject);
       } else {
-        reject(new Error("Error truncating file."));
+        reject(new TruncateFileError());
       }
     });
   });
@@ -179,9 +178,13 @@ export const updateFile = async (fileLocationAndName, content, tuple) =>
       .then(() => filterResolutionParam(tuple, fileLocationAndName))
       .then(resolve)
       .catch((e) =>
-        e.message.includes("exist")
-          ? reject(Error("Cannot update the file. It may not exist."))
-          : reject(e)
+        reject(ConditionalByNameError
+        .factory()
+        .withError(e)
+        ._if("NotExistingFileError")
+        ._then(new UpdateFileError())
+        .defaultsTo(e)
+        .decide())
       );
   });
 
@@ -241,15 +244,20 @@ export const deleteFile = async (fileLocationAndName, tuple) =>
       .then((deletedLocation) => filterResolutionParam(tuple, deletedLocation))
       .then(resolve)
       .catch((e) =>
-        e.message.includes("exist")
-          ? reject(new Error("Error deleting file. It may not exist."))
-          : reject(e)
+      reject(
+        ConditionalByNameError
+        .factory()
+        .withError(e)
+        ._if("NotExistingFileError")
+        ._then(new DeletingFileError())
+        .defaultsTo(e)
+        .decide())
       );
   });
 
 /**
  * Resolves if the file is successfully created.
- * Rejects if the file is
+ * Rejects if the file already exists.
  * @param {String} fileLocationAndName
  * @param {String} content
  * @param {Array} tuple
@@ -263,11 +271,14 @@ export const createFile = async (fileLocationAndName, content = "", tuple) =>
       .then(() => filterResolutionParam(tuple, fileLocationAndName)) // resolves the fileLocationAndName instead of the fileDescriptor
       .then(resolve)
       .catch((e) =>
-        e.message.includes("exist")
-          ? reject(
-              new Error("Could not create the new file. It may already exist.")
-            )
-          : reject(e)
+      reject(
+        ConditionalByNameError
+        .factory()
+        .withError(e)
+        ._if("ExistingFileError")
+        ._then(new CreatingFileError())
+        .defaultsTo(e)
+        .decide())
       );
   });
 
@@ -315,7 +326,7 @@ export const fileExists = async (supposedFileLocation, tuple) =>
           new Promise((res, rej) => {
             fs.readFile(supposedFileLocation, "utf8", (err) => {
               if (err) {
-                rej(new Error("File doesn't exist."));
+                rej(new NotExistingFileError("File doesn't exist."));
               } else {
                 res(supposedFileLocation);
               }
@@ -338,7 +349,7 @@ export const fileExists = async (supposedFileLocation, tuple) =>
 export const fileDoesntExist = async (supposedFileLocation, tuple) =>
   new Promise((resolve, reject) => {
     fileExists(supposedFileLocation)
-      .then(() => reject(new Error("The file exists.")))
+      .then(() => reject(new ExistingFileError()))
       .catch(() =>
         filterResolutionParam(tuple, supposedFileLocation).then(resolve)
       );
@@ -360,15 +371,18 @@ export const isDirectory = async (dirPath, tuple) =>
           if (err && !stat) {
             // If it gets here, is because directory doesn't exist.
             reject(
-              new Error(
-                `The given directory wasn't found. Directory: ${dirPath}`
+              new DirectoryNotFoundError(
+                dirPath
               )
             );
           } else {
+            // If it gets here, is because the dirPath exists, however it still may be a directory or not. 
             if (stat.isDirectory()) {
+              // if it is a directory, resolve. 
               filterResolutionParam(tuple, dirPath).then(resolve).catch(reject);
             } else {
-              reject(new Error(`The ${dirPath} isn't a directory!`));
+              // If not, then reject.
+              reject(new IsDirectoryError(dirPath));
             }
           }
         });
@@ -403,13 +417,14 @@ export const dirExists = async (dirPath, tuple) =>
 export const dirDoesntExist = async (dirPath, tuple) =>
   new Promise((resolve, reject) => {
     dirExists(dirPath)
-      .then(() => reject(new Error(`Directory already exists.`)))
-      .catch((e) =>
+      .then(() => reject(new ExistingDirError()))
+      .catch(() =>
         filterResolutionParam(tuple, dirPath).then(resolve).catch(reject)
       );
   });
 
 /**
+ * This function is supported in Node 10 or above. 
  * Creates a dir recursively. Resolves the dirPath if the creation was successfull or rejects if an error occurs
  * @param {*} dirPath
  * @param {Array} tuple
@@ -428,7 +443,7 @@ export const createDir = async (dirPath, tuple) =>
         });
       })
       .catch((e) =>
-        reject(new Error("Cannot create the directory. It may already exist."))
+        reject(new CreatingDirError())
       );
   });
 
@@ -447,9 +462,7 @@ export const deleteDir = (dirPath, tuple) =>
         fs.rmdir(dirPath, { recursive: true, force: true }, (err) => {
           if (err) {
             reject(
-              new Error(
-                `Failed to delete folder due to the following error: ${err.message}`
-              )
+              err
             );
           } else {
             filterResolutionParam(tuple, dirPath).then(resolve).catch(reject);
@@ -457,6 +470,6 @@ export const deleteDir = (dirPath, tuple) =>
         })
       )
       .catch((e) =>
-        reject(new Error("Could not delete the folder. It may not exist."))
+        reject(new DeletingDirError())
       );
   });

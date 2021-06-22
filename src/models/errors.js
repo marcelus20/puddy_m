@@ -215,7 +215,84 @@ export class HashingAlgorithmError extends CustomError{
   }
 }
 
+export class ListDirContentError extends CustomError{
+  constructor(dirLocation){
+    super(`No files or folders were found in this directory. Directory location: ${dirLocation}`);
+  }
+}
 
+export class TruncateFileError extends CustomError{
+  constructor(){
+    super(`Error truncating file.`);
+  }
+}
+
+
+export class UpdateFileError extends CustomError{
+  constructor(){
+    super(`Cannot update the file. It may not exist.`);
+  }
+}
+
+export class NotExistingFileError extends CustomError{
+  constructor(){
+    super(`File doesn't exist.`);
+  }
+}
+
+export class DeletingFileError extends CustomError{
+  constructor(){
+    super(`Error deleting file. It may not exist.`);
+  }
+}
+
+export class CreatingFileError extends CustomError{
+  constructor(){
+    super(`Could not create the new file. It may already exist.`);
+  }
+}
+
+
+export class ExistingFileError extends CustomError{
+  constructor(){
+    super(`The file exists.`);
+  }
+}
+
+
+export class DirectoryNotFoundError extends CustomError{
+  constructor(dirPath){
+    super(`The given directory wasn't found. Directory: ${dirPath}`);
+  }
+}
+
+
+export class IsDirectoryError extends CustomError{
+  constructor(dirPath){
+    super(`The ${dirPath} isn't a directory!`);
+  }
+}
+
+
+export class ExistingDirError extends CustomError{
+  constructor(dirPath){
+    super(`Directory already exists.`);
+  }
+}
+
+
+export class CreatingDirError extends CustomError{
+  constructor(dirPath){
+    super(`Cannot create the directory. It may already exist.`);
+  }
+}
+
+
+export class DeletingDirError extends CustomError{
+  constructor(dirPath){
+    super(`Could not delete the folder. It may not exist.`);
+  }
+}
 
 export class ConditionalByNameError {
   static factory(

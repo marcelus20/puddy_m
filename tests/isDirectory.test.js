@@ -4,7 +4,7 @@ test("isDirectory will resolve true if parameter is a path to a directory", () =
   return expect(isDirectory(".test-data")).resolves.toBe(".test-data");
 });
 
-test("isDirectory will resolve false if parameter is a path to a file", () => {
+test("isDirectory will reject if parameter is a path to a file", () => {
   return expect(
     createFile(".test-data/dirCheck.file").then((created) =>
       isDirectory(".test-data/dirCheck.file")
