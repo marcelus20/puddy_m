@@ -119,6 +119,104 @@ export class ListOfInstanceValidationError extends CustomError {
   }
 }
 
+export class IntegerValidationError extends CustomError {
+  constructor() {
+    super(`The parameter must be an number Integer.`);
+  }
+}
+
+export class IntegerValidationErrorFromValue extends CustomError {
+  constructor() {
+    super(
+      `The parameter must be an number Integer greater or equal what was specified in the from parameter.`
+    );
+  }
+}
+
+export class IntegerValidationErrorToValue extends CustomError {
+  constructor() {
+    super(
+      `The parameter must be an number Integer lower or equal what was specified in the limit parameter.`
+    );
+  }
+}
+
+export class EmailValidationError extends CustomError {
+  constructor() {
+    super(`The parameter must be a valid email format: foo@bar.com`);
+  }
+}
+
+export class StringLengthGreaterThanError extends CustomError {
+  constructor(str, len) {
+    super(
+      `The string length is not greater than the length passed as parameter. String Length: ${str.length} - Length Parameter ${len}`
+    );
+  }
+}
+
+export class StringLengthGreaterEqualError extends CustomError {
+  constructor(str, len) {
+    super(
+      `The string length is not greater or equal the length passed as parameter. String Length: ${str.length} - Length Parameter ${len}`
+    );
+  }
+}
+
+export class StringLengthLowerThanError extends CustomError {
+  constructor(str, len) {
+    super(
+      `The string length is not lower than the length passed as parameter. String Length: ${str.length} - Length Parameter ${len}`
+    );
+  }
+}
+
+export class StringLengthLowerEqualError extends CustomError {
+  constructor(str, len) {
+    super(
+      `The string length is not lower or equal the length passed as parameter. String Length: ${str.length} - Length Parameter ${len}`
+    );
+  }
+}
+
+export class PositiveIntegersError extends CustomError {
+  constructor(){
+    super("The number passed as parameter must be positive, and should not be 0.")
+  }
+}
+
+export class NegativeIntegersError extends CustomError {
+  constructor(){
+    super("The number passed as parameter must be negative, and should not be 0.")
+  }
+}
+
+
+export class AllArgsValidationError extends CustomError {
+  constructor() {
+    super(
+      `Failed to validate args. The validation function is invalid or wasn't passed.`
+    );
+  }
+}
+
+//AllArgsNoArgsValidationError
+export class AllArgsNoArgsValidationError extends CustomError {
+  constructor() {
+    super(
+      `Failed to validate args. The function received 0 args to validate. `
+    );
+  }
+}
+
+export class HashingAlgorithmError extends CustomError{
+  constructor(){
+    super("The hashing algorithm specified is invalid or not supported with the current version of the Open SSL. Issue the openssl list -digest-algorithms in the terminal to see available supported open SSL hashing algorithms.")
+  }
+}
+
+
+
 export class ConditionalByNameError {
   static factory(
     conditions = new Map(),
@@ -146,16 +244,11 @@ export class ConditionalByNameError {
     this.defaultError = defaultError;
   }
 
-  _if = (condition) => {
+  _if = (errorName) => {
     if (this.e) {
       const numberOfConditions = this.conditions.size;
-      this.conditions.set(numberOfConditions, [this.e.name == condition, null]);
-      return new ConditionalByNameError(
-        this.conditions,
-        this.conditionWithNoValueKey,
-        this.e,
-        this.defaultError
-      );
+      this.conditions.set(numberOfConditions, [this.e.name == errorName, null]);
+      return this
     } else {
       throw new Error(
         "Before invoking the _if method, you should have set up the 'e' attribute. The Method 'withError' should be invoked before _if."
@@ -172,32 +265,17 @@ export class ConditionalByNameError {
         "The number of times the _then method should be invoked is the same number of times the _if was invoked."
       );
     }
-    return new ConditionalByNameError(
-      this.conditions,
-      this.conditionWithNoValueKey,
-      this.e,
-      this.defaultError
-    );
+    return this
   };
 
   withError = (e) => {
     this.e = e;
-    return new ConditionalByNameError(
-      this.conditions,
-      this.conditionWithNoValueKey,
-      this.e,
-      this.defaultError
-    );
+    return this
   };
 
   defaultsTo = (defaultError) => {
     this.defaultError = defaultError;
-    return new ConditionalByNameError(
-      this.conditions,
-      this.conditionWithNoValueKey,
-      this.e,
-      this.defaultError
-    );
+    return this
   };
 
   decide = () => {
@@ -219,4 +297,43 @@ export class ConditionalByNameError {
 
     return this.defaultError;
   };
+}
+
+export class ConditionalByMessageError extends ConditionalByNameError{
+  
+  static factory(
+    conditions = new Map(),
+    conditionWithNoValueKey = 0,
+    e,
+    defaultError
+  ) {
+    
+    
+    return new ConditionalByMessageError(
+      (conditions = new Map()),
+      (conditionWithNoValueKey = 0),
+      e,
+      defaultError
+    );
+
+  }
+
+  // Overriding the _if method. 
+  _if = (messagePortion) => {
+    console.log({messagePortion})
+    if (this.e) {
+      const numberOfConditions = this.conditions.size;
+      this.conditions.set(numberOfConditions, [this.e.message.includes(messagePortion), null]);
+      return new ConditionalByNameError(
+        this.conditions,
+        this.conditionWithNoValueKey,
+        this.e,
+        this.defaultError
+      );
+    } else {
+      throw new Error(
+        "Before invoking the _if method, you should have set up the 'e' attribute. The Method 'withError' should be invoked before _if."
+      );
+    } 
+  }
 }

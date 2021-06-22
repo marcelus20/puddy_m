@@ -1,4 +1,4 @@
-import { validateNumber } from "../src/validators";
+import { validateNumber } from "../src/validators/validators";
 
 test("validateNumber will resolve when param is 1", () => {
   return expect(validateNumber(1)).resolves.toBe(1);

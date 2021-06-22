@@ -1,4 +1,5 @@
-import { validateObjectWithKeys } from "../src/complexValidators";
+import { validateObjectWithKeys } from "../src/validators/complexValidators";
+
 
 test("validateObjectWithKeys will reject when the keys foo and bar aren't valid for the object.", () => {
   return expect(

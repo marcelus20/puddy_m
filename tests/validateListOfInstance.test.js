@@ -1,4 +1,5 @@
-import { validateListOfInstance } from "../src/listValidators";
+import { validateListOfInstance } from "../src/validators/listValidators";
+
 
 class User {}
 

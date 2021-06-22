@@ -1,4 +1,4 @@
-import { validateObject } from "../src/complexValidators";
+import { validateObject } from "../src/validators/complexValidators";
 import {
   createDir,
   createFile,
@@ -13,7 +13,7 @@ import {
 import {
   validateListOfInstance,
   validateListOfType,
-} from "../src/listValidators";
+} from "../src/validators/listValidators";
 import {
   validateBoolean,
   validateInstance,
@@ -22,7 +22,7 @@ import {
   validateNotUndefined,
   validateNumber,
   validateString,
-} from "../src/validators";
+} from "../src/validators/validators";
 
 test("functions will resolve to a tuple conatining the parameters of the chained promises if the tuple parameter is passed.", () => {
   return expect(

@@ -1,4 +1,4 @@
-import { validateListOfType } from "../src/listValidators";
+import { validateListOfType } from "../src/validators/listValidators";
 
 test("validateListOfType will resolve when all elements of the array is of type passed as parameter.", () => {
   return expect(

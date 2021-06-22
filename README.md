@@ -55,7 +55,7 @@ function f(a, b, c, d, e, callbackSuccess, callbackError){
     .then(tuple=>validateBoolean(d, tuple)) // tuple at this point is [ a, b, c ]
     .then(tuple=>validateNotNull(e, tuple)) // tuple at this point is [ a, b, c, d ]
     .then(tuple=>validateFunction(callbackSuccess, tuple)) // tuple at this point is [ a, b, c, d, e ]
-    .then([a, b, c, d, e, callbackSuccess] =>callbackSuccess("Worked")) // Tuple was distructured to [a, b, c, d, e, callbackSuccess]
+    .then(([a, b, c, d, e, callbackSuccess]) =>callbackSuccess("Worked")) // Tuple was distructured to [a, b, c, d, e, callbackSuccess]
     .catch(e=>{
       validateFunction(callbackError).then(callbackError)
       return e

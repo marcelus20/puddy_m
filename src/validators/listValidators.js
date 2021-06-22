@@ -1,11 +1,11 @@
 import { validateObjectWithExistingKey } from "./complexValidators";
-import { PrimitiveTypes } from "./enums";
+import { PrimitiveTypes } from "../enums";
 import {
   ConditionalByNameError,
   ListOfTypeValidationError,
   NotUndefinedValidationError,
   ObjectWithExistingKeyValidationError,
-} from "./models/errors";
+} from "../models/errors";
 import {
   filterResolutionParam,
   validateArray,
@@ -71,7 +71,7 @@ export const validateListOfInstance = async (InstanceReference, list, tuple) =>
   new Promise((resolve, reject) => {
     validateNotUndefined(InstanceReference)
       .then(() => validateArray(list))
-      .then((list) =>
+      .then((list) => 
         Promise.all(list.map((el) => validateInstance(InstanceReference, el)))
       )
       .then(() => filterResolutionParam(tuple, list))

@@ -1,4 +1,4 @@
-import { PrimitiveTypes } from "./enums";
+import { PrimitiveTypes } from "../enums";
 import {
   ArrayValidationError,
   BooleanValidationError,
@@ -11,7 +11,7 @@ import {
   NumberValidationError,
   StringValidationError,
   TypeValidationError,
-} from "./models/errors";
+} from "../models/errors";
 
 import regeneratorRuntime from "regenerator-runtime";
 
