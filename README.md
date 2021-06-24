@@ -66,7 +66,7 @@ function f(a, b, c, d, e, callbackSuccess, callbackError){
 If the validation fails in any of the chained promises, you can easily include the error handling logic in the catch function.
 
 
-## Installation - PS: The published version in NPM is out of dated, the lib is still in development.
+## Installation
 
 Use the package manager npm to install puddy-m.
 

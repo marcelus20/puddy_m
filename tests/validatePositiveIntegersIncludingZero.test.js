@@ -1,7 +1,7 @@
 import {
     IntegerValidationError,
-  IntegerValidationErrorFromValue,
   NumberValidationError,
+  PositiveIncludingZeroValidationError,
 } from "../src/models/errors";
 import { validatePositiveIntegersIncludingZero } from "../src/validators/complexValidators";
 
@@ -15,7 +15,7 @@ test("validatePositiveIntegersIncludingZero should resolve if number is greater 
 
 test("validatePositiveIntegersIncludingZero should reject if number is lower than 0.", () => {
   return expect(validatePositiveIntegersIncludingZero(-1)).rejects.toThrow(
-    new IntegerValidationErrorFromValue().message
+    new PositiveIncludingZeroValidationError().message
   );
 });
 

@@ -22,7 +22,7 @@ import {
   validateNotUndefined,
   validateNumber,
   validateString,
-} from "../src/validators/validators";
+} from "../src/validators";
 
 test("functions will resolve to a tuple conatining the parameters of the chained promises if the tuple parameter is passed.", () => {
   return expect(

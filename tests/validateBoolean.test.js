@@ -1,4 +1,4 @@
-import { validateBoolean } from "../src/validators/validators";
+import { validateBoolean } from "../src/validators";
 
 test("validateBoolean should resolve boolean (true) when the parameter is of type boolean (true).", () => {
   return expect(validateBoolean(true)).resolves.toBe(true);

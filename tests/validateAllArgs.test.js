@@ -8,7 +8,7 @@ import {
   validateBoolean,
   validateNumber,
   validateString,
-} from "../src/validators/validators";
+} from "../src/validators";
 
 test("validateAllArgs should resolve when the list of args are of the type string", () => {
   return expect(

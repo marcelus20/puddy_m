@@ -1,4 +1,4 @@
-import { validateFunction } from "../src/validators/validators";
+import { validateFunction } from "../src/validators";
 
 test("validateFunction will reject when param is null", () => {
   return expect(validateFunction(null)).rejects.toThrow(

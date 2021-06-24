@@ -1,4 +1,5 @@
 import { createFile, fileExists } from "../src/fileFunctions";
+import { StringValidationError } from "../src/models/errors";
 
 test("fileExists will reject when param file doesn't exist", () => {
   return expect(fileExists("./nonExistingFile")).rejects.toThrow(
@@ -14,13 +15,13 @@ test("fileExists will resolve true when param file doesn't exist", () => {
 
 test("fileExists will reject when param is null", () => {
   return expect(fileExists(null)).rejects.toThrow(
-    "The passed argument can't be null."
+    new StringValidationError()
   );
 });
 
 test("fileExists will reject when param is not a string", () => {
   return expect(fileExists(true)).rejects.toThrow(
-    "The passed argument isn't a string."
+    new StringValidationError()
   );
 });
 

@@ -14,6 +14,10 @@ test("validateEmail should resolve the the email string if the it is in a valid 
   return expect(validateEmail("foo@bar.com")).resolves.toBe("foo@bar.com");
 });
 
+test("validateEmail should resolve a trimmered version of email string if the it is in a valid email format.", () => {
+  return expect(validateEmail("       foo@bar.com     ")).resolves.toBe("foo@bar.com");
+});
+
 test("validateEmail should reject the string if the string is in a valid email format.", () => {
   return expect(validateEmail("misha@")).rejects.toThrow(
     new EmailValidationError().message

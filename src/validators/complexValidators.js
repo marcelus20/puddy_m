@@ -5,7 +5,6 @@ import {
   IntegerValidationError,
   IntegerValidationErrorFromValue,
   IntegerValidationErrorToValue,
-  NotUndefinedValidationError,
   ObjectValidationError,
   ObjectWithExistingKeyValidationError,
   ObjectWithKeysValidationError,
@@ -18,6 +17,12 @@ import {
   StringLengthGreaterEqualError,
   PositiveIntegersError,
   NegativeIntegersError,
+  ArrayEmptyValidationError,
+  PasswordValidationError,
+  RepeatedConsecutiveCharsInStringValidationError,
+  NonRepeatedConsecutiveCharsInStringValidationError,
+  PositiveIncludingZeroValidationError,
+  ConditionalByInstanceError,
 } from "../models/errors";
 import {
   filterResolutionParam,
@@ -30,13 +35,10 @@ import {
   validateNumber,
   validateString,
   validateType,
-} from "./validators";
+} from ".";
 
 import regeneratorRuntime from "regenerator-runtime";
-import {
-  PrimitiveTypes,
-  PrimitiveTypesForValidateAllArgsFunction,
-} from "../enums";
+import { PrimitiveTypes } from "../enums";
 
 /**
  * This module is to keep only complex functions.
@@ -356,7 +358,16 @@ export const validatePositiveIntegersIncludingZero = async (
         filterResolutionParam(tuple, supposedPositiveIncludingZeroInteger)
       )
       .then(resolve)
-      .catch(reject);
+      .catch((e) =>
+        reject(
+          ConditionalByNameError.factory()
+            .withError(e)
+            ._if("IntegerValidationErrorFromValue")
+            ._then(new PositiveIncludingZeroValidationError())
+            .defaultsTo(e)
+            .decide()
+        )
+      );
   });
 
 /**
@@ -384,9 +395,9 @@ export const validateNegativeIntegersIncludingZero = async (
  * Validates the integer number if it's positive, not including 0
  * resolves integer if valid.
  * Rejects if an error occur or integer is below 0
- * @param {*} supposedPositiveInteger 
- * @param {*} tuple 
- * @returns 
+ * @param {*} supposedPositiveInteger
+ * @param {*} tuple
+ * @returns
  */
 export const validatePositiveIntegers = async (
   supposedPositiveInteger,
@@ -412,9 +423,9 @@ export const validatePositiveIntegers = async (
  * Validates the integer number if it's negative, not including 0
  * resolves integer if valid.
  * Rejects if an error occur or integer is above 0
- * @param {*} supposedPositiveInteger 
- * @param {*} tuple 
- * @returns 
+ * @param {*} supposedPositiveInteger
+ * @param {*} tuple
+ * @returns
  */
 export const validateNegativeIntegers = async (
   supposedPositiveInteger,
@@ -424,14 +435,16 @@ export const validateNegativeIntegers = async (
     validateIntegerUntilLimit(supposedPositiveInteger, tuple, -1)
       .then(() => filterResolutionParam(tuple, supposedPositiveInteger))
       .then(resolve)
-      .catch(e=>reject(
-        ConditionalByNameError.factory()
-        .withError(e)
-        ._if("IntegerValidationErrorToValue")
-        ._then(new NegativeIntegersError())
-        .defaultsTo(e)
-        .decide()
-      ));
+      .catch((e) =>
+        reject(
+          ConditionalByNameError.factory()
+            .withError(e)
+            ._if("IntegerValidationErrorToValue")
+            ._then(new NegativeIntegersError())
+            .defaultsTo(e)
+            .decide()
+        )
+      );
   });
 
 /**
@@ -459,7 +472,7 @@ export const validateAllArgsNumber = async (...everything) =>
   });
 
 /**
- * Resolves an array of the objecsts if all arguments is an object.
+ * Resolves an array of the objects if all arguments are an objects.
  * @param  {...any} everything
  * @returns {Promise}
  */
@@ -484,8 +497,8 @@ export const validateAllArgsBoolean = async (...everything) =>
 
 /**
  * Resolves an array of integers if all args passed are valid integers.
- * @param  {...any} everything 
- * @returns 
+ * @param  {...any} everything
+ * @returns
  */
 export const validateAllArgsInteger = async (...everything) =>
   new Promise((resolve, reject) => {
@@ -525,8 +538,8 @@ export const validateAllArgs = async (validationFunction, ...args) =>
 
 /**
  * Resolves an array of arrays (2D arrays) if all args passed are valid arrays.
- * @param  {...any} everything 
- * @returns 
+ * @param  {...any} everything
+ * @returns
  */
 export const validateAllArgsArray = async (...everything) =>
   new Promise((resolve, reject) =>
@@ -534,3 +547,123 @@ export const validateAllArgsArray = async (...everything) =>
       .then(resolve)
       .catch(reject)
   );
+
+/**
+ * Resolves the password string if it validates against the criteria. See PasswordValidationError for more info on criteria.
+ * Rejects if an error occur or if not valid.
+ * @param {String} password
+ * @returns
+ */
+export async function validatePassword(password, tuple) {
+  return new Promise((resolve, reject) => {
+    validateString(password)
+      .then((password) => {
+        const reg = /^.*(?=.{12,})(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%&?"]).*$/;
+        if (reg.test(password)) {
+          return password;
+        } else {
+          reject(new PasswordValidationError());
+        }
+      })
+      .then((password) =>
+        validateNonRepeatedConsecutiveCharsInString(password, 3) // Not allowed more than 3 consecutive repeatition of chars.
+      )
+      .then(password, filterResolutionParam(tuple, password))
+      .then(resolve)
+      .catch((e) =>
+        reject(
+          ConditionalByNameError.factory()
+            .withError(e)
+            ._if("NonRepeatedConsecutiveCharsInStringValidationError")
+            ._then(new PasswordValidationError())
+            .defaultsTo(e)
+            .decide()
+        )
+      );
+  });
+}
+
+/**
+ * Check if the array is empty
+ * @param {*} array
+ * @returns
+ */
+export const validateEmptyArray = async (array, tuple) =>
+  new Promise((resolve, reject) => {
+    validateArray(array)
+      .then((array) => {
+        if (array.length == 0) {
+          filterResolutionParam(tuple, array).then(resolve);
+        } else {
+          reject(new ArrayEmptyValidationError());
+        }
+      })
+      .catch(reject);
+  });
+
+/**
+ * Resolves a string that has consecutive repeating chars in it.
+ * If the repeating number of times is less than the tolerance, then it will reject.
+ * Repeating must be at least equal the tolerance.
+ * Repeating is different from times it appears in a row.
+ * If "aaaaaa" appeared 6 times in a row, then it means that it repeated only 5, as the first time isn't a repeatition.
+ * Repeatition  = times it appears - 1.
+ * The tolerance is concerned the least amount of times it must repeat (times -1), and not least amount of times it appears.
+ * @param {*} str
+ * @param {*} tolerance
+ * @param {*} tuple
+ * @returns
+ */
+export const validateRepeatedConsecutiveCharsInString = async (
+  str,
+  tolerance = 1,
+  tuple
+) =>
+  new Promise((resolve, reject) => {
+    validateStringLengthGreaterThan(str, 0)
+      .then((str) => validatePositiveIntegers(tolerance, [str]))
+      .then(([str, tolerance]) => {
+        // Initiate algorithm to check validate strings that are repeating the at least the tolerance number of times.
+        const strArray = str.split("");
+        let repetitiveinARollCounter = 0;
+        let reference = strArray[0];
+        for (let i = 1; i < str.length; i++) {
+          if (repetitiveinARollCounter >= tolerance) {
+            filterResolutionParam(tuple, str).then(resolve);
+            return;
+          }
+          if (strArray[i] == strArray[i - 1]) {
+            repetitiveinARollCounter++;
+          } else {
+            repetitiveinARollCounter = 0;
+          }
+          reference = strArray[i];
+        }
+        // If it gets out the loop, then it didn't find any repeated chars.
+        reject(new RepeatedConsecutiveCharsInStringValidationError());
+      })
+      .catch(reject);
+  });
+
+export const validateNonRepeatedConsecutiveCharsInString = async (
+  str,
+  tolerance = 0,
+  tuple
+) =>
+  new Promise((resolve, reject) => {
+    validatePositiveIntegersIncludingZero(tolerance, [str])
+      .then(([str, toleance]) =>
+        validateRepeatedConsecutiveCharsInString(str, tolerance + 1)
+      )
+      .then(() =>
+        reject(new NonRepeatedConsecutiveCharsInStringValidationError())
+      )
+      .catch((e) => {
+        if (e instanceof PositiveIncludingZeroValidationError) {
+          reject(e);
+        } else {
+          resolve(str);
+        }
+        reject(e);
+      });
+  });

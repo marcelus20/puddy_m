@@ -4,7 +4,7 @@ import {
   validateNotUndefined,
   validateTrim,
   filterResolutionParam,
-} from "./validators/validators";
+} from "./validators";
 import fs from "fs";
 
 import regeneratorRuntime from "regenerator-runtime";

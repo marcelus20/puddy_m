@@ -1,4 +1,4 @@
-import { validateNotNull } from "../src/validators/validators";
+import { validateNotNull } from "../src/validators";
 
 test("validateNotNull will reject when param is null", () => {
   return expect(validateNotNull(null)).rejects.toThrow(

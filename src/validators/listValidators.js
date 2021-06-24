@@ -13,7 +13,7 @@ import {
   validateNotUndefined,
   validateString,
   validateType,
-} from "./validators";
+} from ".";
 
 import regeneratorRuntime from "regenerator-runtime";
 

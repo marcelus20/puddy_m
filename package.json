@@ -1,6 +1,6 @@
 {
   "name": "puddy-m",
-  "version": "1.0.13",
+  "version": "1.0.2",
   "description": "A promise based utility library",
   "scripts": {
     "test": "rm -rf .test-data && mkdir -p .test-data/empty && jest && rm -rf .test-data",
@@ -15,7 +15,7 @@
     "promise",
     "utility"
   ],
-  "author": "Felipe Mantovani",
+  "author": "Felipe Mantovani <marcelus20felipe@gmail.com> (https://www.linkedin.com/in/felipe-mantovani20/)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/marcelus20/puddy_m/issues"

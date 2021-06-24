@@ -275,22 +275,54 @@ export class IsDirectoryError extends CustomError{
 
 
 export class ExistingDirError extends CustomError{
-  constructor(dirPath){
+  constructor(){
     super(`Directory already exists.`);
   }
 }
 
 
 export class CreatingDirError extends CustomError{
-  constructor(dirPath){
+  constructor(){
     super(`Cannot create the directory. It may already exist.`);
   }
 }
 
 
 export class DeletingDirError extends CustomError{
-  constructor(dirPath){
+  constructor(){
     super(`Could not delete the folder. It may not exist.`);
+  }
+}
+
+export class ArrayEmptyValidationError extends CustomError{
+  constructor(){
+    super(`The array is not empty.`);
+  }
+}
+
+
+export class PasswordValidationError extends CustomError{
+  constructor(){
+    super(`The password doesn't validate against the criteria. It must have at least one lowercase, uppercase, number, and symbol !@#$%&? and be 12+ character long. Also, no more than 3 consecutive repeated characters are allowed: eg: 'aaaaaa' or '55555'.`);
+  }
+}
+
+
+export class RepeatedConsecutiveCharsInStringValidationError extends CustomError{
+  constructor(){
+    super(`Didn't find consecutive repeated chars in the string.`);
+  }
+}
+
+export class NonRepeatedConsecutiveCharsInStringValidationError extends CustomError{
+  constructor(){
+    super(`Repeated consecutive chars was found in the string.`);
+  }
+}
+
+export class PositiveIncludingZeroValidationError extends CustomError{
+  constructor(){
+    super(`Only positive numbers and number 0 are allowed to be passed.`);
   }
 }
 
@@ -397,7 +429,6 @@ export class ConditionalByMessageError extends ConditionalByNameError{
 
   // Overriding the _if method. 
   _if = (messagePortion) => {
-    console.log({messagePortion})
     if (this.e) {
       const numberOfConditions = this.conditions.size;
       this.conditions.set(numberOfConditions, [this.e.message.includes(messagePortion), null]);
