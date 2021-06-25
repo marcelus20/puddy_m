@@ -7,7 +7,7 @@ Puddy-m is a JavaScript library to deal with simple utility validation checks, u
 ### Why this lib was created
 To reduce the number of inline validations and re-assignment to variables. Using puddy-m, you will carry out the same task using a promise-based approach, making your code more legible, having control of what's going on in each step. 
 
-### Example
+### Example and Usage
 Say you received different variables and you want to check if the they are string, or not undefined, or boolean, etc, an approach without this library would be to reassign the variable making a series of ternary expression check, like so:
 
 ```javascript
@@ -33,7 +33,7 @@ function f(a, b, c, d, e, callbackSuccess, callbackError){
 ```
 The problem with the approach above is that you make re-assignments to a variable, the least you could do to avoid it was to create a new variable (validatedX and validatedY) using const, but still the ternary expression can get more complex as the number of validations increases.
 
-With puddy-m, the idea is to break down validations into separate steps using promises and you have an idea of the chronological validations checks happening . For the example bellow, the code would change like so:
+With puddy-m, the idea is to break down validations into separate steps using promises and so you have an idea of the chronological steps . For the example bellow, the code would change like so:
 
 ```javascript
 
@@ -76,12 +76,8 @@ npm install puddy-m
 npm i puddy-m
 ```
 
-## Usage
-
-Coming...
-
 ## Documentation
-Coming...
+https://puddy-m-doc.vercel.app/ (Still developing documentation.)
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.

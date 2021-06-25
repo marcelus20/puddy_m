@@ -326,6 +326,24 @@ export class PositiveIncludingZeroValidationError extends CustomError{
   }
 }
 
+export class IfWithoutEAttrError extends CustomError{
+  constructor(){
+    super(`"Before invoking the _if method, you should have set up the 'e' attribute. The Method 'withError' should be invoked before the method _if."`);
+  }
+}
+
+export class OverInvokingThenMethod extends CustomError{
+  constructor(){
+    super("The number of times the '_then' method should be invoked must be the same number of times the _if was invoked.")
+  }
+}
+
+export class DecisionWithourADefaultEError extends CustomError{
+  constructor(){
+    super("The 'decide' method cannot be invoked without having previously set a default error using the 'defaultsTo' method, when all conditions aren't met.")
+  }
+}
+
 export class ConditionalByNameError {
   static factory(
     conditions = new Map(),
@@ -359,9 +377,7 @@ export class ConditionalByNameError {
       this.conditions.set(numberOfConditions, [this.e.name == errorName, null]);
       return this
     } else {
-      throw new Error(
-        "Before invoking the _if method, you should have set up the 'e' attribute. The Method 'withError' should be invoked before _if."
-      );
+      throw new IfWithoutEAttrError();
     }
   };
 
@@ -370,9 +386,7 @@ export class ConditionalByNameError {
       this.conditions.get(this.conditionWithNoValueKey)[1] = value;
       this.conditionWithNoValueKey++;
     } else {
-      throw new Error(
-        "The number of times the _then method should be invoked is the same number of times the _if was invoked."
-      );
+      throw new OverInvokingThenMethod()
     }
     return this
   };
@@ -399,9 +413,7 @@ export class ConditionalByNameError {
     }
 
     if (!this.defaultError) {
-      throw new Error(
-        "The 'decide' method cannot be invoked without having previously set a default error, using the 'defaultsTo' method, when all conditions aren't met."
-      );
+      throw new DecisionWithourADefaultEError()
     }
 
     return this.defaultError;
