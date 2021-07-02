@@ -61,7 +61,7 @@ export const hash = async (
  */
 export const hashSHA256 = async (stringToHash, secret = "", tuple) =>
   new Promise((resolve, reject) => {
-    hash(stringToHash, secret, HashingAlgorithms.SHA256, tuple)
+    hash(stringToHash, secret, HashingAlgorithms.SHA256)
       .then((hash) => filterResolutionParam(tuple, hash))
       .then(resolve)
       .catch(reject);
@@ -76,7 +76,7 @@ export const hashSHA256 = async (stringToHash, secret = "", tuple) =>
  */
 export const hashSHA512 = async (stringToHash, secret = "", tuple) =>
   new Promise((resolve, reject) => {
-    hash(stringToHash, secret, HashingAlgorithms.SHA512, tuple)
+    hash(stringToHash, secret, HashingAlgorithms.SHA512)
       .then((hash) => filterResolutionParam(tuple, hash))
       .then(resolve)
       .catch(reject);
