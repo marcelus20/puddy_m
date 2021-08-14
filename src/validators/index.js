@@ -55,7 +55,7 @@ export const validateNotNull = async (supposedNotNullArg, tuple) =>
  * @param {Array} tuple
  * @returns { Promise }
  */
-export const validateNotUndefined = async(supposedNotUndefinedArg, tuple) =>
+export const validateNotUndefined = async (supposedNotUndefinedArg, tuple) =>
   new Promise((resolve, reject) => {
     validateNotType(PrimitiveTypes.UNDEFINED, supposedNotUndefinedArg, tuple)
       .then(resolve)
@@ -131,15 +131,20 @@ export const validateInstance = async (InstanceRef, supposedInstance, tuple) =>
     }
   });
 
-export const validateNotInstance = async (InstanceRef, supposedNotInstance, tuple) =>
+export const validateNotInstance = async (
+  InstanceRef,
+  supposedNotInstance,
+  tuple
+) =>
   new Promise((resolve, reject) => {
+    //console.log({InstanceRef, supposedNotInstance})
     validateInstance(InstanceRef, supposedNotInstance, tuple)
       .then(() =>
-        reject(new NotInstanceValidationError(InstanceRef, supposedInstance))
+        reject(new NotInstanceValidationError(InstanceRef, supposedNotInstance))
       )
-      .catch((e) =>
-        filterResolutionParam(tuple, supposedNotInstance).then(resolve)
-      );
+      .catch((e) => {
+        filterResolutionParam(tuple, supposedNotInstance).then(resolve);
+      });
   });
 
 /**
