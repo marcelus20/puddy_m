@@ -2,6 +2,8 @@ import {
   IntegerValidationError,
   IntegerValidationErrorFromValue,
   IntegerValidationErrorToValue,
+  NegativeIntegersError,
+  NegativeIntegersIncludingZeroValidationError,
   NumberValidationError,
 } from "../src/models/errors";
 import { validateNegativeIntegersIncludingZero } from "../src/validators/complexValidators";
@@ -12,7 +14,7 @@ test("validateNegativeIntegersIncludingZero should resolve if number is 0.", () 
 
 test("validateNegativeIntegersIncludingZero should reject if number is greater than 0.", () => {
   return expect(validateNegativeIntegersIncludingZero(10)).rejects.toThrow(
-    new IntegerValidationErrorToValue()
+    NegativeIntegersIncludingZeroValidationError
   );
 });
 
@@ -29,5 +31,11 @@ test("validateNegativeIntegersIncludingZero should reject NumberValidationError 
 test("validateNegativeIntegersIncludingZero should reject IntegerValidationError if parameter isn't a number greater or equal 0, but not an integer.", () => {
   return expect(validateNegativeIntegersIncludingZero(1.3)).rejects.toThrow(
     new IntegerValidationError().message
+  );
+});
+
+test("validateNegativeIntegersIncludingZero should reject if it receives a positive 1.", () => {
+  return expect(validateNegativeIntegersIncludingZero(1)).rejects.toThrow(
+    NegativeIntegersIncludingZeroValidationError
   );
 });

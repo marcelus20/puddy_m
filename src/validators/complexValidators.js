@@ -23,6 +23,7 @@ import {
   NonRepeatedConsecutiveCharsInStringValidationError,
   PositiveIncludingZeroValidationError,
   ConditionalByInstanceError,
+  NegativeIntegersIncludingZeroValidationError,
 } from "../models/errors";
 import {
   filterResolutionParam,
@@ -383,12 +384,21 @@ export const validateNegativeIntegersIncludingZero = async (
   tuple
 ) =>
   new Promise((resolve, reject) => {
-    validateIntegerUntilLimit(supposedPositiveIncludingZeroInteger, tuple, 1)
+    validateIntegerUntilLimit(supposedPositiveIncludingZeroInteger, tuple, 0)
       .then(() =>
         filterResolutionParam(tuple, supposedPositiveIncludingZeroInteger)
       )
       .then(resolve)
-      .catch(reject);
+      .catch((e) =>
+        reject(
+          ConditionalByNameError.factory()
+            .withError(e)
+            ._if("IntegerValidationErrorToValue")
+            ._then(new NegativeIntegersIncludingZeroValidationError())
+            .defaultsTo(e)
+            .decide()
+        )
+      );
   });
 
 /**
@@ -565,8 +575,8 @@ export async function validatePassword(password, tuple) {
           reject(new PasswordValidationError());
         }
       })
-      .then((password) =>
-        validateNonRepeatedConsecutiveCharsInString(password, 3) // Not allowed more than 3 consecutive repeatition of chars.
+      .then(
+        (password) => validateNonRepeatedConsecutiveCharsInString(password, 3) // Not allowed more than 3 consecutive repeatition of chars.
       )
       .then(password, filterResolutionParam(tuple, password))
       .then(resolve)
@@ -627,7 +637,7 @@ export const validateRepeatedConsecutiveCharsInString = async (
         const strArray = str.split("");
         let repetitiveinARollCounter = 0;
         let reference = strArray[0];
-        for (let i = 1; i < str.length; i++) {
+        for (let i = 1; i <= str.length; i++) {
           if (repetitiveinARollCounter >= tolerance) {
             filterResolutionParam(tuple, str).then(resolve);
             return;
@@ -659,11 +669,10 @@ export const validateNonRepeatedConsecutiveCharsInString = async (
         reject(new NonRepeatedConsecutiveCharsInStringValidationError())
       )
       .catch((e) => {
-        if (e instanceof PositiveIncludingZeroValidationError) {
-          reject(e);
+        if (e instanceof RepeatedConsecutiveCharsInStringValidationError) {
+          filterResolutionParam(tuple, str).then(resolve);
         } else {
-          resolve(str);
+          reject(e);
         }
-        reject(e);
       });
   });

@@ -191,6 +191,13 @@ export class NegativeIntegersError extends CustomError {
   }
 }
 
+// NegativeIntegersIncludingZeroValidationError
+
+export class NegativeIntegersIncludingZeroValidationError extends CustomError {
+  constructor(){
+    super("The number passed as parameter must be negative, or should be 0.")
+  }
+}
 
 export class AllArgsValidationError extends CustomError {
   constructor() {
