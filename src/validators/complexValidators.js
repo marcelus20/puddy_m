@@ -573,12 +573,13 @@ export async function validatePassword(password, tuple) {
           return password;
         } else {
           reject(new PasswordValidationError());
+          return;
         }
       })
       .then(
         (password) => validateNonRepeatedConsecutiveCharsInString(password, 3) // Not allowed more than 3 consecutive repeatition of chars.
       )
-      .then(password, filterResolutionParam(tuple, password))
+      .then((password) => filterResolutionParam(tuple, password))
       .then(resolve)
       .catch((e) =>
         reject(

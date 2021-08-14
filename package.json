@@ -1,6 +1,6 @@
 {
   "name": "puddy-m",
-  "version": "1.0.423",
+  "version": "1.0.424",
   "description": "A promise based utility library",
   "scripts": {
     "test": "rm -rf .test-data && mkdir -p .test-data/empty && jest && rm -rf .test-data",
